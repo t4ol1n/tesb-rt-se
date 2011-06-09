@@ -19,6 +19,9 @@
  */
 package org.talend.esb.job.controller.internal;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 
@@ -33,6 +36,7 @@ import org.apache.cxf.endpoint.ClientImpl;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.endpoint.EndpointException;
 import org.apache.cxf.endpoint.EndpointImpl;
+import org.apache.cxf.feature.AbstractFeature;
 import org.apache.cxf.service.Service;
 import org.apache.cxf.service.ServiceImpl;
 import org.apache.cxf.service.model.BindingInfo;
@@ -54,18 +58,24 @@ public class RuntimeESBConsumer implements ESBConsumer {
 	private final String operationName;
 	private final String publishedEndpointUrl;
 	private final boolean isRequestResponse;
+	private final AbstractFeature serviceLocator;
+	private final AbstractFeature serviceActivityMonitoring;
 
 	public RuntimeESBConsumer(
 			final QName serviceName,
 			final QName portName,
 			String operationName,
 			String publishedEndpointUrl,
-			boolean isRequestResponse) {
+			boolean isRequestResponse,
+			final AbstractFeature serviceLocator,
+			final AbstractFeature serviceActivityMonitoring) {
 		this.serviceName = serviceName;
 		this.portName = portName;
 		this.operationName = operationName;
 		this.publishedEndpointUrl = publishedEndpointUrl;
 		this.isRequestResponse = isRequestResponse;
+		this.serviceLocator = serviceLocator;
+		this.serviceActivityMonitoring = serviceActivityMonitoring;
 	}
 
 	@Override
@@ -133,7 +143,15 @@ public class RuntimeESBConsumer implements ESBConsumer {
 
 		service.setDataBinding(new SourceDataBinding());
 
-		Endpoint endpoint = new EndpointImpl(bus, service, ei);
+		EndpointImpl endpoint = new EndpointImpl(bus, service, ei);
+		List<AbstractFeature> features= new ArrayList<AbstractFeature>();
+		if(serviceLocator != null) {
+			features.add(serviceLocator);
+		}
+		if(serviceActivityMonitoring != null) {
+			features.add(serviceActivityMonitoring);
+		}
+		endpoint.initializeActiveFeatures(features);
 
 		return new ClientImpl(bus, endpoint);
 	}

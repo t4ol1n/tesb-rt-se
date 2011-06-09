@@ -194,12 +194,18 @@ public class TalendJobLauncher implements ESBEndpointRegistry {
 		// create generic consumer
 		if(esbConsumer == null) {
 			final String publishedEndpointUrl = (String)props.get(PUBLISHED_ENDPOINT_URL);
+			boolean useServiceLocator =
+				((Boolean)props.get(USE_SERVICE_LOCATOR)).booleanValue();
+			boolean useServiceActivityMonitor =
+				((Boolean)props.get(USE_SERVICE_ACTIVITY_MONITOR)).booleanValue();
 			esbConsumer = new RuntimeESBConsumer(
 					serviceName,
 					portName,
 					operationName,
 					publishedEndpointUrl,
-					VALUE_REQUEST_RESPONSE.equals(props.get(COMMUNICATION_STYLE)));
+					VALUE_REQUEST_RESPONSE.equals(props.get(COMMUNICATION_STYLE)),
+					useServiceLocator ? serviceLocator : null,
+					useServiceActivityMonitor ? serviceActivityMonitoring : null);
 		}
 		return esbConsumer;
 	}
