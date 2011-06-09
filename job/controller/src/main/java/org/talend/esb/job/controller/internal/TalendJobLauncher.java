@@ -27,6 +27,8 @@ import java.util.logging.Logger;
 
 import javax.xml.namespace.QName;
 
+import org.apache.cxf.feature.AbstractFeature;
+
 import routines.system.api.ESBConsumer;
 import routines.system.api.ESBEndpointInfo;
 import routines.system.api.ESBEndpointRegistry;
@@ -52,6 +54,18 @@ public class TalendJobLauncher implements ESBEndpointRegistry {
 		new ConcurrentHashMap<ESBProviderKey, Collection<ESBProvider>>();
 	private final Map<TalendJob, Thread > jobs =
 		new ConcurrentHashMap<TalendJob, Thread>();
+
+	private AbstractFeature serviceLocator;
+	private AbstractFeature serviceActivityMonitoring;
+
+	public void setServiceLocator(AbstractFeature serviceLocator) {
+		this.serviceLocator = serviceLocator;
+	}
+
+	public void setServiceActivityMonitoring(
+			AbstractFeature serviceActivityMonitoring) {
+		this.serviceActivityMonitoring = serviceActivityMonitoring;
+	}
 
 	public void runTalendJob(final TalendJob talendJob, final String[] args) {
 		
@@ -95,13 +109,6 @@ public class TalendJobLauncher implements ESBEndpointRegistry {
 	}
 
 	private ESBProviderCallback createESBProvider(final Map<String, Object> props) {
-		boolean useServiceLocator =
-			((Boolean)props.get(USE_SERVICE_LOCATOR)).booleanValue();
-		System.out.println("useServiceLocator="+useServiceLocator);
-		boolean useServiceActivityMonitor =
-			((Boolean)props.get(USE_SERVICE_ACTIVITY_MONITOR)).booleanValue();
-		System.out.println("useServiceActivityMonitor="+useServiceActivityMonitor);
-
 		final String publishedEndpointUrl = (String)props.get(PUBLISHED_ENDPOINT_URL);
 		final QName serviceName = QName.valueOf((String)props.get(SERVICE_NAME));
 		final QName portName = QName.valueOf((String)props.get(PORT_NAME));
@@ -122,9 +129,16 @@ public class TalendJobLauncher implements ESBEndpointRegistry {
 			}
 		}
 		if(esbProvider == null) {
+			boolean useServiceLocator =
+				((Boolean)props.get(USE_SERVICE_LOCATOR)).booleanValue();
+			boolean useServiceActivityMonitor =
+				((Boolean)props.get(USE_SERVICE_ACTIVITY_MONITOR)).booleanValue();
+
 			esbProvider = new ESBProvider(publishedEndpointUrl,
 					serviceName,
-					portName);
+					portName,
+					useServiceLocator ? serviceLocator : null,
+					useServiceActivityMonitor ? serviceActivityMonitoring : null);
 			esbProviders.add(esbProvider);
 		}
 

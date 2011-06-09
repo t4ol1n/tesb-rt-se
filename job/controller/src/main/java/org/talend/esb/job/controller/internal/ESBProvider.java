@@ -19,6 +19,8 @@
  */
 package org.talend.esb.job.controller.internal;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
@@ -31,6 +33,7 @@ import javax.xml.ws.handler.MessageContext;
 
 import org.apache.cxf.binding.soap.model.SoapOperationInfo;
 import org.apache.cxf.endpoint.Server;
+import org.apache.cxf.feature.AbstractFeature;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.apache.cxf.service.model.BindingInfo;
 import org.apache.cxf.service.model.BindingOperationInfo;
@@ -47,14 +50,16 @@ import org.apache.cxf.service.model.ServiceInfo;
 class ESBProvider implements javax.xml.ws.Provider<javax.xml.transform.Source> {
 	
 	private static final Logger LOG = Logger.getLogger(ESBProvider.class.getName());
-	private javax.xml.transform.TransformerFactory factory =
+	private final javax.xml.transform.TransformerFactory factory =
 		javax.xml.transform.TransformerFactory.newInstance();
 
-	private Map<String, RuntimeESBProviderCallback> callbacks =
+	private final Map<String, RuntimeESBProviderCallback> callbacks =
 		new ConcurrentHashMap<String, RuntimeESBProviderCallback>();
-	private String publishedEndpointUrl;
-	private QName serviceName;
-	private QName portName;
+	private final String publishedEndpointUrl;
+	private final QName serviceName;
+	private final QName portName;
+	private final AbstractFeature serviceLocator;
+	private final AbstractFeature serviceActivityMonitoring;
 
 	private Server server;
 
@@ -63,10 +68,14 @@ class ESBProvider implements javax.xml.ws.Provider<javax.xml.transform.Source> {
 
 	public ESBProvider(String publishedEndpointUrl,
 			final QName serviceName,
-			final QName portName) {
+			final QName portName,
+			final AbstractFeature serviceLocator,
+			final AbstractFeature serviceActivityMonitoring) {
 		this.publishedEndpointUrl = publishedEndpointUrl;
 		this.serviceName = serviceName;
 		this.portName = portName;
+		this.serviceLocator = serviceLocator;
+		this.serviceActivityMonitoring = serviceActivityMonitoring;
 
 		run();
 	}
@@ -81,6 +90,14 @@ class ESBProvider implements javax.xml.ws.Provider<javax.xml.transform.Source> {
 		sf.setEndpointName(portName);
 		sf.setAddress(publishedEndpointUrl);
 		sf.setServiceBean(this);
+		List<AbstractFeature> features= new ArrayList<AbstractFeature>();
+		if(serviceLocator != null) {
+			features.add(serviceLocator);
+		}
+		if(serviceActivityMonitoring != null) {
+			features.add(serviceActivityMonitoring);
+		}
+		sf.setFeatures(features);
 
 		server = sf.create();
 
