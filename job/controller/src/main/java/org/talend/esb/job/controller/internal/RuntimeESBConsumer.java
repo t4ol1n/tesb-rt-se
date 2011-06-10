@@ -33,10 +33,11 @@ import org.apache.cxf.binding.soap.SoapBindingConstants;
 import org.apache.cxf.databinding.source.SourceDataBinding;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.ClientImpl;
-import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.endpoint.EndpointException;
 import org.apache.cxf.endpoint.EndpointImpl;
 import org.apache.cxf.feature.AbstractFeature;
+import org.apache.cxf.jaxws.support.JaxWsEndpointImpl;
+import org.apache.cxf.jaxws.support.JaxWsEndpointImplFactory;
 import org.apache.cxf.service.Service;
 import org.apache.cxf.service.ServiceImpl;
 import org.apache.cxf.service.model.BindingInfo;
@@ -143,15 +144,29 @@ public class RuntimeESBConsumer implements ESBConsumer {
 
 		service.setDataBinding(new SourceDataBinding());
 
-		EndpointImpl endpoint = new EndpointImpl(bus, service, ei);
-		List<AbstractFeature> features= new ArrayList<AbstractFeature>();
-		if(serviceLocator != null) {
-			features.add(serviceLocator);
+		EndpointImpl endpoint = //new EndpointImpl(bus, service, ei);
+			JaxWsEndpointImplFactory.getSingleton().newEndpointImpl(bus, service, ei);
+		if(endpoint instanceof JaxWsEndpointImpl) {
+			List<AbstractFeature> features = ((JaxWsEndpointImpl)endpoint).getFeatures();
+			if(serviceLocator != null) {
+				System.out.println("!!! serviceLocator");
+				features.add(serviceLocator);
+			}
+			if(serviceActivityMonitoring != null) {
+				System.out.println("!!! serviceActivityMonitoring");
+				features.add(serviceActivityMonitoring);
+			}
 		}
-		if(serviceActivityMonitoring != null) {
-			features.add(serviceActivityMonitoring);
-		}
-		endpoint.initializeActiveFeatures(features);
+//		List<AbstractFeature> features = new ArrayList<AbstractFeature>();
+//		if(serviceLocator != null) {
+//			System.out.println("!!! serviceLocator");
+//			features.add(serviceLocator);
+//		}
+//		if(serviceActivityMonitoring != null) {
+//			System.out.println("!!! serviceActivityMonitoring");
+//			features.add(serviceActivityMonitoring);
+//		}
+//		endpoint.initializeActiveFeatures(features);
 
 		return new ClientImpl(bus, endpoint);
 	}

@@ -90,7 +90,7 @@ class ESBProvider implements javax.xml.ws.Provider<javax.xml.transform.Source> {
 		sf.setEndpointName(portName);
 		sf.setAddress(publishedEndpointUrl);
 		sf.setServiceBean(this);
-		List<AbstractFeature> features= new ArrayList<AbstractFeature>();
+		List<AbstractFeature> features = new ArrayList<AbstractFeature>();
 		if(serviceLocator != null) {
 			features.add(serviceLocator);
 		}
