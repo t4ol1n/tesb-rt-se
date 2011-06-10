@@ -26,6 +26,9 @@
 		http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
 	"
 >
+    <!-- SL -->
+    <import resource="classpath:META-INF/tesb/locator/beans-osgi.xml" />
+    <!-- SAM -->
     <import resource="classpath:META-INF/tesb/agent-osgi.xml" />
 
     <bean id="controller" class="org.talend.esb.job.controller.internal.ControllerImpl">
@@ -36,10 +39,11 @@
     <osgi:service interface="org.talend.esb.job.controller.Controller" ref="controller"/>
 
     <bean id="launcher" class="org.talend.esb.job.controller.internal.TalendJobLauncher">
-        <property name="serviceLocator" ref="serviceLocator"/>
+        <property name="serviceLocator">
+            <bean class="org.talend.esb.servicelocator.cxf.LocatorFeature"/>
+        </property>
         <property name="serviceActivityMonitoring" ref="eventFeature"/>
     </bean>
 
-    <bean id="serviceLocator" class="org.talend.esb.servicelocator.cxf.LocatorFeature"/>
 
 </beans>
