@@ -82,8 +82,16 @@ public class LocatorClientEnabler implements ClientLifeCycleListener {
 	}
 
     public void enable(Client client, SLPropertiesMatcher matcher) {
+    	enable(client, matcher, null);
+    }
+    
+    public void enable(Client client, SLPropertiesMatcher matcher, String selectionStrategy) {
         LocatorTargetSelector selector = new LocatorTargetSelector();
         selector.setEndpoint(client.getEndpoint());
+        
+        if (selectionStrategy != null) {
+        	setLocatorSelectionStrategy(selectionStrategy);
+        }
 
         locatorSelectionStrategy.setServiceLocator(locatorClient);
         if (matcher != null) {

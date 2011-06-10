@@ -45,6 +45,8 @@ public class LocatorFeature extends AbstractFeature {
     private SLPropertiesImpl slProps;
 
     private SLPropertiesMatcher slPropsMatcher;
+    
+    private String selectionStrategy;
 
     @Override
 	public void initialize(Bus bus) {
@@ -65,7 +67,7 @@ public class LocatorFeature extends AbstractFeature {
 		}
 
 		ServiceLocatorManager slm = bus.getExtension(ServiceLocatorManager.class);
-		slm.enableClient(client, slPropsMatcher);
+		slm.enableClient(client, slPropsMatcher, selectionStrategy);
 	}
 
 	@Override
@@ -109,7 +111,11 @@ public class LocatorFeature extends AbstractFeature {
        }
    }
 
-   List<String> tokenize(String valueList) {
+   public void setSelectionStrategy(String selectionStrategy) {
+	this.selectionStrategy = selectionStrategy;
+}
+
+List<String> tokenize(String valueList) {
        List<String> normalizedValues = new ArrayList<String>();
        String[] values = valueList.split(",");
        

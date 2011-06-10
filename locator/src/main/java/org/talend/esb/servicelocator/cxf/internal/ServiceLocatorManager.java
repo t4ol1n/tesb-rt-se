@@ -58,6 +58,10 @@ public class ServiceLocatorManager implements BusExtension {
         clientEnabler.enable(client, matcher);
     }
 
+    public void enableClient(Client client, SLPropertiesMatcher matcher, String selectionStrategy) {
+        clientEnabler.enable(client, matcher, selectionStrategy);
+    }
+
     public void setBus(Bus bus) {
 		if (bus != this.bus) {
 			this.bus = bus;
