@@ -190,9 +190,11 @@ class ESBProvider implements javax.xml.ws.Provider<javax.xml.transform.Source> {
 	}
 
 	private void addOperation(String operationName, boolean isRequestResponse) {
-		final ServiceInfo si =
-			server.getEndpoint().getService().getServiceInfos().get(0);
-
+		addOperation(server.getEndpoint().getService().getServiceInfos().get(0),
+				operationName, isRequestResponse);
+	}
+	
+	public static void addOperation(final ServiceInfo si, String operationName, boolean isRequestResponse) {
 		final InterfaceInfo ii = si.getInterface();
         final String namespace = ii.getName().getNamespaceURI();
 
