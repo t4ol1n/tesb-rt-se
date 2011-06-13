@@ -26,12 +26,16 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import javax.annotation.Resource;
+import javax.wsdl.WSDLException;
+import javax.wsdl.extensions.ExtensionRegistry;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
-import org.apache.cxf.binding.soap.model.SoapOperationInfo;
+import org.apache.cxf.Bus;
+import org.apache.cxf.binding.soap.Soap12;
+import org.apache.cxf.binding.soap.model.SoapBindingInfo;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.feature.AbstractFeature;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
@@ -42,17 +46,22 @@ import org.apache.cxf.service.model.MessageInfo;
 import org.apache.cxf.service.model.MessagePartInfo;
 import org.apache.cxf.service.model.OperationInfo;
 import org.apache.cxf.service.model.ServiceInfo;
+import org.apache.cxf.tools.common.extensions.soap.SoapOperation;
+import org.apache.cxf.tools.util.SOAPBindingUtil;
+import org.apache.cxf.wsdl.WSDLManager;
 
 //@javax.jws.WebService(name = "TalendJobAsWebService", targetNamespace = "http://talend.org/esb/service/job")
-//@javax.jws.soap.SOAPBinding(parameterStyle = javax.jws.soap.SOAPBinding.ParameterStyle.BARE)
+//@javax.jws.soap.SOAPBinding(parameterStyle = javax.jws.soap.SOAPBinding.ParameterStyle.BARE, style = javax.jws.soap.SOAPBinding.Style.DOCUMENT, use = javax.jws.soap.SOAPBinding.Use.LITERAL)
 @javax.xml.ws.ServiceMode(value = javax.xml.ws.Service.Mode.PAYLOAD)
 @javax.xml.ws.WebServiceProvider()
 class ESBProvider implements javax.xml.ws.Provider<javax.xml.transform.Source> {
 	
 	private static final Logger LOG = Logger.getLogger(ESBProvider.class.getName());
-	private final javax.xml.transform.TransformerFactory factory =
+	private static final javax.xml.transform.TransformerFactory factory =
 		javax.xml.transform.TransformerFactory.newInstance();
-
+	private static final QName XSD_ANY_TYPE =
+		new QName("http://www.w3.org/2001/XMLSchema", "anyType");
+	
 	private final Map<String, RuntimeESBProviderCallback> callbacks =
 		new ConcurrentHashMap<String, RuntimeESBProviderCallback>();
 	private final String publishedEndpointUrl;
@@ -100,6 +109,13 @@ class ESBProvider implements javax.xml.ws.Provider<javax.xml.transform.Source> {
 		sf.setFeatures(features);
 
 		server = sf.create();
+
+		// remove default operation
+		removeOperation("invoke");
+		// fix namespace
+		InterfaceInfo ii = server.getEndpoint().getService().getServiceInfos().get(0).getInterface();
+		QName name = ii.getName();
+		ii.setName(new QName(serviceName.getNamespaceURI(), name.getLocalPart()));
 
 		LOG.info("Web service '" + serviceName + "' published at endpoint '"
 				+ publishedEndpointUrl + "'");
@@ -174,36 +190,53 @@ class ESBProvider implements javax.xml.ws.Provider<javax.xml.transform.Source> {
 	}
 
 	private void addOperation(String operationName, boolean isRequestResponse) {
-		ServiceInfo si = server.getEndpoint().getService().getServiceInfos().get(0);
-		InterfaceInfo ii = si.getInterface();
+		final ServiceInfo si =
+			server.getEndpoint().getService().getServiceInfos().get(0);
 
+		final InterfaceInfo ii = si.getInterface();
         final String namespace = ii.getName().getNamespaceURI();
-		OperationInfo oi = ii.addOperation(new QName(namespace,
-				operationName));
-		MessageInfo mii = oi.createMessage(new QName(namespace,
-				operationName + "RequestMsg"), MessageInfo.Type.INPUT);
-		oi.setInput(operationName + "RequestMsg", mii);
+
+		final OperationInfo oi = ii.addOperation(
+				new QName(namespace, operationName));
+		MessageInfo mii = oi.createMessage(
+				new QName(namespace, operationName + "Request"),
+				MessageInfo.Type.INPUT);
+		oi.setInput(operationName + "Request", mii);
 		MessagePartInfo mpi = mii.addMessagePart("request");
-		//SchemaInfo si = ii.getService().getSchemas().get(0);
-		//mpi.setElementQName(new QName(serviceName.getNamespaceURI(), operationName + "Request"));
-		mpi.setTypeQName(new QName("http://www.w3.org/2001/XMLSchema", "anyType"));
-		
+		mpi.setTypeQName(XSD_ANY_TYPE);
 		if(isRequestResponse) {
-			MessageInfo mio = oi.createMessage(new QName(namespace,
-					operationName + "ResponseMsg"), MessageInfo.Type.OUTPUT);
-			oi.setOutput(operationName + "ResponseMsg", mio);
+			MessageInfo mio = oi.createMessage(
+					new QName(namespace, operationName + "Response"),
+					MessageInfo.Type.OUTPUT);
+			oi.setOutput(operationName + "Response", mio);
 			mpi = mio.addMessagePart("response");
-			//mpi.setElementQName(new QName(serviceName.getNamespaceURI(), operationName + "Response"));
-			mpi.setTypeQName(new QName("http://www.w3.org/2001/XMLSchema", "anyType"));
+			mpi.setTypeQName(XSD_ANY_TYPE);
 		}
 
-		BindingInfo bi = si.getBindings().iterator().next();
+		final BindingInfo bi =
+			si.getBindings().iterator().next();
         BindingOperationInfo boi = new BindingOperationInfo(bi, oi);
-		SoapOperationInfo soi = new SoapOperationInfo();
-		soi.setAction(operationName);
-		boi.addExtensor(soi);
+	    bi.addOperation(boi);
+		if(bi instanceof SoapBindingInfo) {
+//			SoapOperationInfo soi = new SoapOperationInfo();
+//			soi.setAction(operationName);
+//			boi.addExtensor(soi);
 
-        bi.addOperation(boi);
+			SoapBindingInfo sbi = (SoapBindingInfo)bi;
+	        Bus bs = org.apache.cxf.bus.spring.SpringBusFactory.getDefaultBus();
+	        WSDLManager m = bs.getExtension(WSDLManager.class);
+	        ExtensionRegistry extensionRegistry = m.getExtensionRegistry();
+	        boolean isSoap12 = sbi.getSoapVersion() instanceof Soap12;
+			try {
+				SoapOperation soapOperation = SOAPBindingUtil.createSoapOperation(extensionRegistry,
+				        isSoap12);
+				soapOperation.setSoapActionURI(operationName/*soi.getAction()*/);
+//				soapOperation.setStyle(soi.getStyle());
+	            boi.addExtensor(soapOperation);
+			} catch (WSDLException e) {
+				throw new RuntimeException(e);
+			}
+		}
 	}
 
 	private void removeOperation(String operationName) {
