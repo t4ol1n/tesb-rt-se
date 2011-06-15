@@ -84,7 +84,9 @@ public class TalendJobLauncher implements ESBEndpointRegistry {
 		Thread thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
+		        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
 				try {
+				    Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
 					LOG.info("Talend Job started");
 					int ret = talendJob.runJobInTOS(args);
 					LOG.info("Talend Job finished with code " + ret);
@@ -97,6 +99,7 @@ public class TalendJobLauncher implements ESBEndpointRegistry {
 					}
 				} finally {
 					jobs.remove(talendJob);
+		            Thread.currentThread().setContextClassLoader(contextClassLoader);
 				}
 			}
 		});
