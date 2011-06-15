@@ -107,8 +107,8 @@ class ESBProvider implements javax.xml.ws.Provider<javax.xml.transform.Source> {
 			features.add(serviceActivityMonitoring);
 		}
 		sf.setFeatures(features);
-		sf.setBus(
-			org.apache.cxf.bus.spring.SpringBusFactory.getDefaultBus());
+//		sf.setBus(
+//			org.apache.cxf.bus.spring.SpringBusFactory.getDefaultBus());
 
 		server = sf.create();
 

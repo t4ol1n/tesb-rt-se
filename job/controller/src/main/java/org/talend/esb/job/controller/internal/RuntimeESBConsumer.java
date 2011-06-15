@@ -90,7 +90,11 @@ public class RuntimeESBConsumer implements ESBConsumer {
 		final JaxWsClientFactoryBean cf = new JaxWsClientFactoryBean();
 		cf.setServiceName(serviceName);
 		cf.setEndpointName(portName);
-		cf.setAddress(publishedEndpointUrl);
+		String endpointUrl =
+			(serviceLocator == null)
+				? publishedEndpointUrl
+				: "locator://" + serviceName.getLocalPart();
+		cf.setAddress(endpointUrl);
 		cf.setServiceClass(this.getClass());
 		List<AbstractFeature> features = new ArrayList<AbstractFeature>();
 		if(serviceLocator != null) {
