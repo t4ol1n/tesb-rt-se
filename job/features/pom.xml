@@ -18,7 +18,7 @@
     <parent>
         <groupId>org.talend.esb</groupId>
         <artifactId>job</artifactId>
-        <version>5.0-SNAPSHOT</version>
+        <version>4.2.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
