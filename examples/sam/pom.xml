@@ -9,11 +9,10 @@
     <parent>
         <groupId>org.talend.esb.examples</groupId>
         <artifactId>talend-esb-examples</artifactId>
-        <version>5.0-SNAPSHOT</version>
+        <version>4.2.1-SNAPSHOT</version>
     </parent>
 
     <name>Service Activity Monitoring :: Examples</name>
-    <url>http://www.talend.com</url>
   
     <modules>
         <module>sam-example-client</module>
