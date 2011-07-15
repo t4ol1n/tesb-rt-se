@@ -990,7 +990,8 @@
 								<artifactItem>
 									<groupId>org.talend.esb.docs</groupId>
 									<artifactId>esb-docs</artifactId>
-									<version>${project.version}</version>
+									<version>5.0-SNAPSHOT</version>
+<!-- 									<version>${project.version}</version> -->
 									<type>zip</type>
 									<classifier>pdf</classifier>
 									<outputDirectory>target/docs</outputDirectory>
