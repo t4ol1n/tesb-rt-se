@@ -43,6 +43,8 @@ public class LocatorClientEnabler {
 	
 	private LocatorSelectionStrategy locatorSelectionStrategy;
 
+	private String defaultLocatorSelectionStrategy;
+
 	public void setServiceLocator(ServiceLocator locatorClient) {
 		this.locatorClient = locatorClient;
 		if (LOG.isLoggable(Level.FINE)) {
@@ -75,14 +77,37 @@ public class LocatorClientEnabler {
 		}
 	}
 
-    public void enable(ConduitSelectorHolder conduitSelectorHolder) {
+    public void setDefaultLocatorSelectionStrategy(
+			String defaultLocatorSelectionStrategy) {
+		if (LOG.isLoggable(Level.FINE)) {
+			LOG.log(Level.FINE, "Default strategy " + defaultLocatorSelectionStrategy + " was set for LocatorClientRegistrar.");
+		}
+		if (locatorSelectionStrategies.containsKey(defaultLocatorSelectionStrategy)) {
+			this.locatorSelectionStrategy = locatorSelectionStrategies.get(defaultLocatorSelectionStrategy);
+			this.defaultLocatorSelectionStrategy = defaultLocatorSelectionStrategy;
+			//setLocatorSelectionStrategy(defaultLocatorSelectionStrategy);
+		} else {
+			if (LOG.isLoggable(Level.WARNING))
+				LOG.log(Level.WARNING, "Default LocatorSelectionStrategy " + defaultLocatorSelectionStrategy + " not registered at LocatorClientEnabler.");
+		}
+	}
+
+	public void enable(ConduitSelectorHolder conduitSelectorHolder) {
         enable(conduitSelectorHolder, null);
 	}
 
     public void enable(ConduitSelectorHolder conduitSelectorHolder, SLPropertiesMatcher matcher) {
+    	enable(conduitSelectorHolder, matcher, null);
+    }
+
+    public void enable(ConduitSelectorHolder conduitSelectorHolder, SLPropertiesMatcher matcher, String selectionStrategy) {
         LocatorTargetSelector selector = new LocatorTargetSelector();
         selector.setEndpoint(conduitSelectorHolder.getConduitSelector().getEndpoint());
 
+        if (selectionStrategy != null) {
+        	setLocatorSelectionStrategy(selectionStrategy);
+        } else setLocatorSelectionStrategy(defaultLocatorSelectionStrategy);
+        
         locatorSelectionStrategy.setServiceLocator(locatorClient);
         if (matcher != null) {
             locatorSelectionStrategy.setMatcher(matcher);

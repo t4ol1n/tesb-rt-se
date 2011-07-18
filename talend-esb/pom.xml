@@ -29,6 +29,7 @@
 		<tsf.version>2.4.1.0</tsf.version>
 		<tsf-doc.version>2.5.0-SNAPSHOT</tsf-doc.version>
         <camel.version>2.7.2</camel.version>
+        <esb-doc.version>5.0-SNAPSHOT</esb-doc.version>
 
 		<!-- OSGi (Karaf, Felix, Aries) -->
 		<aries.version>0.3</aries.version>
@@ -990,7 +991,7 @@
 								<artifactItem>
 									<groupId>org.talend.esb.docs</groupId>
 									<artifactId>esb-docs</artifactId>
-									<version>5.0-SNAPSHOT</version>
+									<version>${esb-doc.version}</version>
 <!-- 									<version>${project.version}</version> -->
 									<type>zip</type>
 									<classifier>pdf</classifier>
