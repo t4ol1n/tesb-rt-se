@@ -31,7 +31,7 @@
 							<goal>copy</goal>
 						</goals>
 						<configuration>
-						<stripVersion>true</stripVersion>
+							<stripVersion>true</stripVersion>
 							<artifactItems>
 								<artifactItem>
 									<groupId>org.talend.esb</groupId>
@@ -49,6 +49,12 @@
 				<artifactId>jetty-maven-plugin</artifactId>
 				<version>7.3.1.v20110307</version>
 				<configuration>
+					<systemProperties>
+						<systemProperty>
+							<name>org.talend.esb.sam.server.embedded</name>
+							<value>true</value>
+						</systemProperty>
+					</systemProperties>
 					<connectors>
 						<connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
 							<port>9080</port>
