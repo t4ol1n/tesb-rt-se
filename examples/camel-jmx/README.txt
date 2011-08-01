@@ -72,7 +72,7 @@ should be added to startup script of tomcat.
 * In Talend ESB OSGi container:
 1) Start TESB container.
 2) Type command in TESB container: 		
-features:addurl mvn:org.talend.esb.examples/camel-jmx-feature/5.0-SNAPSHOT/xml
+features:addurl mvn:org.talend.esb.examples/camel-jmx-feature/4.2.1-SNAPSHOT/xml
 4) Type command in TESB container
 features:install camel-jmx-service
 
