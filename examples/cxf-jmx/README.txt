@@ -70,7 +70,6 @@ for deploying the service either to servlet or OSGi containers.
 Starting the service
 ============================================
 To enable Tomcat for jmx:
- 
 for Windows:
 open command prompt and set temporary environment variable CATALINA_OPTS with command:
 set CATALINA_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=6969 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false
@@ -81,19 +80,21 @@ export CATALINA_OPTS="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxrem
 * In servlet container (Tomcat):
 1) Copy war file from the cxf-jmx/war/target folder to webapp folder in Tomcat.
 2) Start Tomcat (use the same command prompt to start tomcat)
+3) You can find wsdl at http://localhost:8080/simpleService/simpleService?wsdl
 
 * In Talend ESB OSGi container:
 1) Start TESB container.
 2) Type command in TESB container: 		
-features:addurl mvn:org.talend.esb.examples/cxf-jmx-feature/4.2.1-SNAPSHOT/xml
+features:addurl mvn:org.talend.esb.examples/cxf-jmx-feature/5.0-SNAPSHOT/xml
 4) Type command in TESB container
 features:install cxf-jmx-service
+5) You can find wsdl at http://localhost:8040/services/simpleService?wsdl
 
 Running the client
 ============================================
 * For TESB container:
-    cd client;
-    mvn exec:java
+    From cxf-jmx folder run:
+    mvn exec:java -pl client
 	
 Build will fail, but this is expected behavior to see how Hyperic will show exception.
 You will see:
@@ -103,8 +104,8 @@ InvocationTargetException: Incorrect name
 Also you'll see exception in TESB container window.
 
 *For servlet container:
-    cd client;
-	mvn exec:java -Pwar
+    From cxf-jmx folder run:
+	mvn exec:java -pl client -Pwar
 
 Build will fail, but this is expected behavior to see how Hyperic will show exception.
 You will see:
