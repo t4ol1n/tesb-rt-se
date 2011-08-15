@@ -39,8 +39,8 @@
 	</licenses>
 
 	<properties>
-		<cxf.version>2.4.1</cxf.version>
-		<camel.version>2.7.2</camel.version>
+		<cxf.version>2.4.2</cxf.version>
+		<camel.version>2.7.3</camel.version>
 		<spring.version>3.0.5.RELEASE</spring.version>
 		<activemq.version>5.4.2</activemq.version>
 		<eclipse.osgi.version>3.6.0.v20100517</eclipse.osgi.version>
