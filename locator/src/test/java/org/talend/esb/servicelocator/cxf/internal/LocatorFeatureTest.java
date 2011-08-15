@@ -95,10 +95,11 @@ public class LocatorFeatureTest extends EasyMockSupport {
 
 		lf.initialize(client, busMock);
 
-		Assert.assertTrue(((LocatorTargetSelector) client.getConduitSelector()).getStrategy() instanceof RandomSelectionStrategy);
+		Assert.assertTrue(((LocatorTargetSelector) client.getConduitSelector())
+				.getStrategy() instanceof RandomSelectionStrategy);
 
 	}
-	
+
 	@Test
 	public void initializeClientsOneWithStrategy() throws EndpointException {
 		LocatorClientEnabler enabler = new LocatorClientEnabler();
@@ -130,15 +131,14 @@ public class LocatorFeatureTest extends EasyMockSupport {
 			Service service = new org.apache.cxf.service.ServiceImpl();
 			Endpoint endpoint = new EndpointImpl(busMock, service, ei);
 			client1 = new ClientImpl(busMock, endpoint);
-	
+
 			LocatorTargetSelector selector = new LocatorTargetSelector();
 			selector.setEndpoint(endpoint);
-	
+
 			client1.setConduitSelector(selector);
-	
-			
+
 			lf.setSelectionStrategy("randomSelectionStrategy");
-	
+
 			lf.initialize(client1, busMock);
 		}
 		{
@@ -146,19 +146,20 @@ public class LocatorFeatureTest extends EasyMockSupport {
 			Service service = new org.apache.cxf.service.ServiceImpl();
 			Endpoint endpoint = new EndpointImpl(busMock, service, ei);
 			client2 = new ClientImpl(busMock, endpoint);
-	
+
 			LocatorTargetSelector selector = new LocatorTargetSelector();
 			selector.setEndpoint(endpoint);
-	
+
 			client2.setConduitSelector(selector);
-	
-			
+
 			lf.setSelectionStrategy(null);
-	
+
 			lf.initialize(client2, busMock);
 		}
-		Assert.assertTrue(((LocatorTargetSelector) client1.getConduitSelector()).getStrategy() instanceof RandomSelectionStrategy);
-		Assert.assertTrue(((LocatorTargetSelector) client2.getConduitSelector()).getStrategy() instanceof EvenDistributionSelectionStrategy);
+		Assert.assertTrue(((LocatorTargetSelector) client1.getConduitSelector())
+				.getStrategy() instanceof RandomSelectionStrategy);
+		Assert.assertTrue(((LocatorTargetSelector) client2.getConduitSelector())
+				.getStrategy() instanceof EvenDistributionSelectionStrategy);
 
 	}
 
@@ -200,7 +201,8 @@ public class LocatorFeatureTest extends EasyMockSupport {
 
 		lf.initialize(client, busMock);
 
-		Assert.assertTrue(((LocatorTargetSelector) client.getConduitSelector()).getStrategy() instanceof DefaultSelectionStrategy);
+		Assert.assertTrue(((LocatorTargetSelector) client.getConduitSelector())
+				.getStrategy() instanceof DefaultSelectionStrategy);
 
 	}
 
@@ -229,10 +231,10 @@ public class LocatorFeatureTest extends EasyMockSupport {
 		replayAll();
 
 		LocatorFeature lf = new LocatorFeature();
-		
+
 		Client client1 = null;
 		Client client2 = null;
-		
+
 		{
 			EndpointInfo ei = new EndpointInfo();
 			Service service = new org.apache.cxf.service.ServiceImpl();
@@ -255,8 +257,10 @@ public class LocatorFeatureTest extends EasyMockSupport {
 			lf.setSelectionStrategy("evenDistributionSelectionStrategy");
 			lf.initialize(client2, busMock);
 		}
-		Assert.assertTrue(((LocatorTargetSelector) client1.getConduitSelector()).getStrategy() instanceof RandomSelectionStrategy);
-		Assert.assertTrue(((LocatorTargetSelector) client2.getConduitSelector()).getStrategy() instanceof EvenDistributionSelectionStrategy);
+		Assert.assertTrue(((LocatorTargetSelector) client1.getConduitSelector())
+				.getStrategy() instanceof RandomSelectionStrategy);
+		Assert.assertTrue(((LocatorTargetSelector) client2.getConduitSelector())
+				.getStrategy() instanceof EvenDistributionSelectionStrategy);
 	}
 
 	@Test
