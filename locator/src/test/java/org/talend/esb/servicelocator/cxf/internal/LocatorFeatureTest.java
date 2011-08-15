@@ -34,14 +34,19 @@ public class LocatorFeatureTest extends EasyMockSupport {
 	Bus busMock;
 	LocatorRegistrar locatorRegistrarMock;
 	Map<String, LocatorSelectionStrategy> locatorSelectionStrategies;
+	ClassLoader cll;
 
 	@Before
 	public void setup() {
 		busMock = createMock(Bus.class);
 
+		expect(busMock.getExtension( ClassLoader.class))
+		.andStubReturn(cll);
+
 		locatorRegistrarMock = createMock(LocatorRegistrar.class);
 		locatorRegistrarMock.startListenForServers();
 		EasyMock.expectLastCall().anyTimes();
+		cll = this.getClass().getClassLoader();
 
 		locatorSelectionStrategies = new HashMap<String, LocatorSelectionStrategy>();
 		locatorSelectionStrategies.put("defaultSelectionStrategy",
