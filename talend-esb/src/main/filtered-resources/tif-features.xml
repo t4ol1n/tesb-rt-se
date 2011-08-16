@@ -29,7 +29,6 @@
     <repository>mvn:org.apache.camel.karaf/apache-camel/${camel.version}/xml/features</repository>
     <repository>mvn:org.apache.cxf.karaf/apache-cxf/${cxf.version}/xml/features</repository>
     <repository>mvn:org.apache.activemq/activemq-karaf/${activemq.version}/xml/features</repository>
-    <repository>mvn:org.talend.esb/saaj/1.3.2/xml/features</repository>
 
     <feature name="tif-core" version="${tif.version}" resolver='(obr)'>
         <feature version="${camel.version}">camel</feature>
@@ -86,8 +85,16 @@
         <feature version="${camel.version}">camel-syslog</feature>
         <feature version="${camel.version}">camel-exec</feature>
     </feature>
+    <feature name="jaxp-ri" version="1.4.4_2"  resolver='(obr)'>
+        <!-- just needed on IBM JDK -->
+        <bundle start-level='25'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jaxp-ri/1.4.4_2</bundle>    
+    </feature>
+    <feature name="tif-saaj-impl" version="1.3.2"  resolver='(obr)'>
+         <bundle start-level='10'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.saaj-api-1.3/${servicemix.specs.version}</bundle>
+         <bundle start-level='25'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.saaj-impl/${saaj-impl.bundle.version}</bundle>
+    </feature>
     <feature name='tif-camel-cxf' version="${tif.version}" resolver='(obr)'>
-    	<feature version="1.3.2">tesb-saaj-impl</feature>
+    	<feature version="1.3.2">tif-saaj-impl</feature>
         <feature version='${cxf.version}'>cxf</feature>
         <feature version='${camel.version}'>camel-spring</feature>
         <bundle>mvn:org.apache.camel/camel-cxf/${camel.version}</bundle>
