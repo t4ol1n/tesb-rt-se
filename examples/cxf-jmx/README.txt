@@ -85,7 +85,7 @@ export CATALINA_OPTS="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxrem
 * In Talend ESB OSGi container:
 1) Start TESB container.
 2) Type command in TESB container: 		
-features:addurl mvn:org.talend.esb.examples/cxf-jmx-feature/5.0-SNAPSHOT/xml
+features:addurl mvn:org.talend.esb.examples/cxf-jmx-feature/4.2.1-SNAPSHOT/xml
 4) Type command in TESB container
 features:install cxf-jmx-service
 5) You can find wsdl at http://localhost:8040/services/simpleService?wsdl
