@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.talend.esb.examples.rent-a-car</groupId>
         <artifactId>reservationservice</artifactId>
-        <version>5.0-SNAPSHOT</version>
+        <version>5.0.1-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
@@ -54,22 +54,12 @@
 						<Import-Package>
 							model.reservation-wsdls,
 							*
-						</Import-Package>				
+						</Import-Package>
                     </instructions>
                 </configuration>
             </plugin>
         </plugins>
-        <resources>
-            <resource>
-                <directory>src/main/resources/</directory>
-				<filtering>true</filtering>
-                <includes>
-                  <include>**/beans.xml</include>
-                  <include>**/clientKeystore.properties</include>
-				  <include>**/model/*</include>
-               </includes>
-            </resource>
-        </resources>
+
     </build>
 </project>
 

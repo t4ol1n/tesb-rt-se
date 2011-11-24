@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.talend.esb</groupId>
 		<artifactId>esb-parent</artifactId>
-		<version>5.0-SNAPSHOT</version>
+		<version>5.0.1-SNAPSHOT</version>
 	</parent>
 
 	<groupId>org.talend.esb.assembly</groupId>
@@ -20,67 +20,58 @@
 
 	<properties>
         <spring.osgi.version>1.2.1</spring.osgi.version>
-		<spring.ws.version>1.5.9</spring.ws.version>
-		<activemq.version>5.5.0</activemq.version>
+		<spring.ws.version>2.0.2.RELEASE</spring.ws.version>
         <zookeeper.package.version>${zookeeper.version}</zookeeper.package.version>
-		<tif.version>2.7.2.0</tif.version>
-		<tif-doc.version>2.7-SNAPSHOT</tif-doc.version>
-		<tsf.version>2.4.1.0</tsf.version>
-		<tsf-doc.version>2.5.0-SNAPSHOT</tsf-doc.version>
-        <camel.version>2.9-SNAPSHOT</camel.version>
+<!-- 		<tesb-doc.version>${project.version}</tesb-doc.version> -->
+		<tesb-doc.version>5.0.0</tesb-doc.version>
+		<tif.version>2.8.2.0</tif.version>
+		<tif-doc.version>${tif.version}</tif-doc.version>
+		<tsf.version>2.5.0.0</tsf.version>
+		<tsf-doc.version>${tsf.version}</tsf-doc.version>
+        <cellar.version>2.2.2</cellar.version>
+        <jclouds.version>1.0.0</jclouds.version>
 
 		<!-- OSGi (Karaf, Felix, Aries) -->
 		<aries.version>0.3</aries.version>
-		<!--karaf.version>2.2.1</karaf.version-->
-		<!--osgi.compendium.version>4.2.0</osgi.compendium.version-->
-		<!--osgi.core.version>4.2.0</osgi.core.version-->
 
 		<!-- Geronimo --> 
 		<geronimo-annotation.version>1.1.1</geronimo-annotation.version>
 		<geronimo-connector.version>2.1.3</geronimo-connector.version>
-		<!-- geronimo-el.version>1.0.1</geronimo-el.version-->
 		<geronimo-j2ee-connector.version>2.0.0</geronimo-j2ee-connector.version>
 		<geronimo-j2ee-management.version>1.0.1</geronimo-j2ee-management.version>
-		<geronimo-jaxws.version>1.0</geronimo-jaxws.version>
+		<geronimo-jaxws.version>1.1</geronimo-jaxws.version>
 		<geronimo-jms.version>1.1.1</geronimo-jms.version>
 		<geronimo-jpa.version>1.1</geronimo-jpa.version>
-		<!-- geronimo-jsp.version>1.0.1</geronimo-jsp.version-->
 		<geronimo-jta.version>1.1.1</geronimo-jta.version>
 		<geronimo-saaj.version>1.1</geronimo-saaj.version>
-		<!-- geronimo-servlet.version>1.1.2</geronimo-servlet.version-->
-		<geronimo-ws-metadata.version>1.1.3</geronimo-ws-metadata.version>
 		<geronimo-transaction.version>1.1.1</geronimo-transaction.version>
 
 		<!-- ServiceMix Bundles --> 
 		<abdera.bundle.version>0.4.0-incubating_3</abdera.bundle.version>
-		<ant.bundle.version>1.7.0_4</ant.bundle.version>
+		<ant.bundle.version>1.7.0_5</ant.bundle.version>
 		<antlr2.bundle.version>2.7.7_3</antlr2.bundle.version>
 		<antlr.bundle.version>3.0.1_4</antlr.bundle.version>
 		<antlr-runtime.bundle.version>3.0.1_2</antlr-runtime.bundle.version>
-		<aopalliance.bundle.version>1.0_4</aopalliance.bundle.version>
-		<asm.bundle.version>3.3_1</asm.bundle.version>
+		<aopalliance.bundle.version>1.0_5</aopalliance.bundle.version>
+		<asm.bundle.version>3.3_2</asm.bundle.version>
 		<aws-java-sdk.bundle.version>1.1.1_1</aws-java-sdk.bundle.version>
 		<bcel.bundle.version>5.2_3</bcel.bundle.version>
 		<castor.bundle.version>1.3.1_1</castor.bundle.version>
 		<cglib.bundle.version>2.2_1</cglib.bundle.version>
-		<cometd-java-server.bundle.version>1.0.1_1</cometd-java-server.bundle.version>
-		<!-- commons-beanutils.bundle.version>1.8.2_1</commons-beanutils.bundle.version-->
+<!-- 		<cometd-java-server.bundle.version>2.3.1_1-SNAPSHOT</cometd-java-server.bundle.version> -->
 		<commons-codec.bundle.version>1.3_3</commons-codec.bundle.version>
 		<commons-collections.bundle.version>3.2.1_1</commons-collections.bundle.version>
 		<commons-csv.bundle.version>1.0-r706899_4</commons-csv.bundle.version>
+		<commons-dbcp.bundle.version>1.4_1</commons-dbcp.bundle.version>
 		<commons-httpclient.bundle.version>3.1_5</commons-httpclient.bundle.version>
-		<!--commons-io.bundle.version>1.4_1</commons-io.bundle.version-->
 		<commons-lang.bundle.version>2.4_4</commons-lang.bundle.version>
-		<commons-net.bundle.version>1.4.1_4</commons-net.bundle.version>
 		<commons-pool.bundle.version>1.5.4_2</commons-pool.bundle.version>
 		<commons-vfs.bundle.version>1.0_5</commons-vfs.bundle.version>
-		<!--dom4j.bundle.version>1.6.1_3</dom4j.bundle.version-->
 		<dozer.bundle.version>5.2.0_2</dozer.bundle.version>
-		<ehcache.bundle.version>2.3.0_1</ehcache.bundle.version>
+		<ehcache.bundle.version>2.4.3_1</ehcache.bundle.version>
 		<fastinfoset.bundle.version>1.2.7_3</fastinfoset.bundle.version>
 		<flatpack.bundle.version>3.2.0_1</flatpack.bundle.version>
-		<freemarker.bundle.version>2.3.15_4</freemarker.bundle.version>
-		<groovy.bundle.version>1.5.6_4</groovy.bundle.version>
+		<freemarker.bundle.version>2.3.18_1</freemarker.bundle.version>
 		<guice.bundle.version>2.0_1</guice.bundle.version>
 		<hapi.bundle.version>0.5.1_4</hapi.bundle.version>
 		<hibernate-validator.bundle.version>4.1.0.Final_1</hibernate-validator.bundle.version>
@@ -88,7 +79,7 @@
 		<irclib.bundle.version>1.10_3</irclib.bundle.version>
 		<isorelax.bundle.version>20050913_3</isorelax.bundle.version>
 		<jain-sip-ri.bundle.version>1.2.154_1</jain-sip-ri.bundle.version>
-		<jasypt.bundle.version>1.7_2</jasypt.bundle.version>
+		<jasypt.bundle.version>1.7_3</jasypt.bundle.version>
 		<javassist.bundle.version>3.9.0.GA_1</javassist.bundle.version>
 		<jaxb-impl.bundle.version>2.2.1.1_1</jaxb-impl.bundle.version>
 		<jaxb-xjc.bundle.version>2.2.1.1_1</jaxb-xjc.bundle.version>
@@ -97,12 +88,10 @@
 		<jaxen.bundle.version>1.1.1_1</jaxen.bundle.version>
 		<jcr-api.bundle.version>1.0_3</jcr-api.bundle.version>
 		<jdt-core.bundle.version>3.2.3_4</jdt-core.bundle.version>
-		<!-- jdom.bundle.version>1.1_3</jdom.bundle.version-->
-		<jetty.version>7.3.1.v20110307</jetty.version>
 		<jexcelapi.bundle.version>2.4.2_3</jexcelapi.bundle.version>
 		<jibx.bundle.version>1.2.2_1</jibx.bundle.version>
 		<jing.bundle.version>20030619_3</jing.bundle.version>
-		<jruby.bundle.version>1.1.2_3</jruby.bundle.version>
+		<jruby.bundle.version>1.5.6_1</jruby.bundle.version>
 		<joda-time.bundle.version>1.5.2_3</joda-time.bundle.version>
 		<josql.bundle.version>1.5_4</josql.bundle.version>
 		<jsch.bundle.version>0.1.44_1</jsch.bundle.version>
@@ -113,11 +102,10 @@
 		<lucene.bundle.version>3.0.3_1</lucene.bundle.version>
 		<mina.bundle.version>1.1.7_4</mina.bundle.version>
 		<mvel.bundle.version>2.0.8_4</mvel.bundle.version>
-		<neethi.bundle.version>3.0.0</neethi.bundle.version>
+		<neethi.bundle.version>3.0.1</neethi.bundle.version>
 		<netty.bundle.version>3.2.3.Final_1</netty.bundle.version>
 		<ognl.bundle.version>2.7.3_4</ognl.bundle.version>
 		<openjpa.bundle.version>2.0.0_1</openjpa.bundle.version>
-		<opensaml.bundle.version>2.4.1_1</opensaml.bundle.version>
 		<oscache.bundle.version>2.4_4</oscache.bundle.version>
 		<oscore.bundle.version>2.2.4_4</oscore.bundle.version>
 		<osworkflow.bundle.version>2.7.0_4</osworkflow.bundle.version>
@@ -130,30 +118,25 @@
 		<regexp.bundle.version>1.3_1</regexp.bundle.version>
 		<rhino.bundle.version>1.7R2_1</rhino.bundle.version>
 		<rome.bundle.version>1.0_1</rome.bundle.version>
-		<!--saaj-impl.bundle.version>1.3.2_2</saaj-impl.bundle.version-->
 		<saxon.bundle.version>9.1.0.8_1</saxon.bundle.version>
-		<scala-library.bundle.version>2.8.1_1</scala-library.bundle.version>
+		<scala-library.bundle.version>2.9.1_1</scala-library.bundle.version>
 		<serp.bundle.version>1.13.1_3</serp.bundle.version>
 		<shiro.bundle.version>1.1.0_1</shiro.bundle.version>
-		<smack.bundle.version>3.1.0_2</smack.bundle.version>
+		<smack.bundle.version>3.2.0_1</smack.bundle.version>
 		<snmp4j.bundle.version>1.8.1_4</snmp4j.bundle.version>
 		<spymemcached.bundle.version>2.5_1</spymemcached.bundle.version>
 		<stringtemplate.bundle.version>3.2_4</stringtemplate.bundle.version>
 		<tagsoup.bundle.version>1.2_4</tagsoup.bundle.version>
-		<velocity.bundle.version>1.7_1</velocity.bundle.version>
+		<velocity.bundle.version>1.7_2</velocity.bundle.version>
 		<werken-xpath.bundle.version>0.9.4_4</werken-xpath.bundle.version>
 		<wsdl4j.bundle.version>1.6.2_3</wsdl4j.bundle.version>
 		<xalan.bundle.version>2.7.1_3</xalan.bundle.version>
 		<xerces.bundle.version>2.9.1_4</xerces.bundle.version>
-		<xmlbeans.bundle.version>2.5.0_1</xmlbeans.bundle.version>
+		<xmlbeans.bundle.version>2.4.0_4</xmlbeans.bundle.version>
 		<xmlresolver.bundle.version>1.2_3</xmlresolver.bundle.version>
-		<!-- version overridden to fix https://jira.sopera.de/browse/TESB-2388 -->
 		<xmlsec.bundle.version>1.4.5_1</xmlsec.bundle.version>
 		<xpp3.bundle.version>1.1.4c_4</xpp3.bundle.version>
 		<xstream.bundle.version>1.3_4</xstream.bundle.version>
-
-		<!-- ServiceMix Specs -->
-		<!--servicemix.specs.version>1.7.0</servicemix.specs.version-->
 
 		<!-- Other Dependencies -->
 		<abdera.version>1.1.2</abdera.version>
@@ -161,46 +144,39 @@
 		<bouncycastle.version>140</bouncycastle.version>
 		<commons-codec.version>1.4</commons-codec.version>
 		<commons-collections.version>3.2.1</commons-collections.version>
-		<commons-dbcp.version>1.3</commons-dbcp.version>
+		<commons-dbcp.version>1.4</commons-dbcp.version>
 		<commons-exec.version>1.0.1</commons-exec.version>
 		<commons-jexl.version>2.0.1</commons-jexl.version>
-		<!--<commons-jxpath.version>1.3</commons-jxpath.version>-->
-		<!--<commons-lang.version>2.4</commons-lang.version>-->
 		<commons-logging.version>1.1.1</commons-logging.version>
 		<commons-management.version>1.0</commons-management.version>
-		<commons-net.version>2.0</commons-net.version>
+		<commons-net.version>2.2</commons-net.version>
 		<derby.version>10.5.3.0_1</derby.version>
 		<dozer-osgi.version>5.3.1</dozer-osgi.version>
 		<easymock.version>2.4</easymock.version>
-		<groovy.version>1.7.9</groovy.version>
+		<groovy.version>1.8.1</groovy.version>
 		<hawtbuf.version>1.2</hawtbuf.version>
 		<hawtdb.version>1.5</hawtdb.version>
-		<hazelcast.version>1.9.2</hazelcast.version>
+		<hazelcast.version>1.9.4</hazelcast.version>
 		<httpclient-osgi.version>4.1</httpclient-osgi.version>
 		<httpcomponents.version>4.0.1</httpcomponents.version>
-		<httpcore-osgi.version>4.1</httpcore-osgi.version>
+		<httpcore-osgi.version>4.1.2</httpcore-osgi.version>
 		<jackrabbit.version>1.5.3</jackrabbit.version>
-		<jackson-core-asl.version>1.7.5</jackson-core-asl.version>
-		<jackson-mapper-asl.version>1.7.5</jackson-mapper-asl.version>
+		<jackson.version>1.8.6</jackson.version>
 		<jaxp-ri.version>1.4.2</jaxp-ri.version>
 		<jaxws-api.version>2.1</jaxws-api.version>
-		<javax.mail.version>1.4.3</javax.mail.version>
+		<javax.mail.version>1.4.4</javax.mail.version>
 		<jettison.version>1.3</jettison.version>
 		<junit.version>4.7</junit.version>
 		<log4j.version>1.2.15</log4j.version>
 		<mybatis.version>3.0.4</mybatis.version>
 		<openjpa.version>2.0.0</openjpa.version>
-		<restlet.version>2.0.5</restlet.version>
-		<pax-web-jsp.version>0.7.2</pax-web-jsp.version>
+		<restlet.version>2.0.9</restlet.version>
+		<pax-web-jsp.version>1.0.7</pax-web-jsp.version>
 		<tranql.version>1.6</tranql.version>
 		<woodstox.version>4.1.1</woodstox.version>
 		<woodstox.stax2-api.version>3.1.1</woodstox.stax2-api.version>
-        <wss4j.version>1.6.0</wss4j.version>
+<!--         <wss4j.version>1.6.3-SNAPSHOT</wss4j.version> -->
         <joda.time.version>1.6.2</joda.time.version>
-
-        <opensaml.version>2.4.1</opensaml.version>
-        <opensamlws.version>1.4.1</opensamlws.version>
-        <opensaml.xmltooling.version>1.3.1</opensaml.xmltooling.version>
 
 		<xbean.version>3.7</xbean.version>
 		<xmlschema.version>2.0</xmlschema.version>
@@ -303,7 +279,21 @@
             <type>xml</type>
             <classifier>features</classifier>
         </dependency>
-        
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>apache-activemq</artifactId>
+            <version>${activemq.version}</version>
+            <type>tar.gz</type>
+            <classifier>bin</classifier>
+        </dependency>        
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>apache-activemq</artifactId>
+            <version>${activemq.version}</version>
+            <type>zip</type>
+            <classifier>bin</classifier>
+        </dependency>        
+		
 		<!-- Apache ZooKeeper -->
 		<dependency>
 			<groupId>org.apache.zookeeper</groupId>
@@ -362,333 +352,12 @@
 			<classifier>pdf</classifier>
 			<type>zip</type>
 		</dependency>
-
-        <!-- ServiceMix Specs -->
-        <dependency>
-            <groupId>org.apache.servicemix.specs</groupId>
-            <artifactId>org.apache.servicemix.specs.activation-api-1.1</artifactId>
-            <version>${servicemix.specs.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.specs</groupId>
-            <artifactId>org.apache.servicemix.specs.jaxb-api-2.1</artifactId>
-            <version>${servicemix.specs.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.specs</groupId>
-            <artifactId>org.apache.servicemix.specs.jaxws-api-2.1</artifactId>
-            <version>${servicemix.specs.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.specs</groupId>
-            <artifactId>org.apache.servicemix.specs.jbi-api-1.0</artifactId>
-            <version>${servicemix.specs.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.specs</groupId>
-            <artifactId>org.apache.servicemix.specs.jsr311-api-1.0</artifactId>
-            <version>${servicemix.specs.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.specs</groupId>
-            <artifactId>org.apache.servicemix.specs.jsr311-api-1.1</artifactId>
-            <version>${servicemix.specs.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.specs</groupId>
-            <artifactId>org.apache.servicemix.specs.saaj-api-1.3</artifactId>
-            <version>${servicemix.specs.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.specs</groupId>
-            <artifactId>org.apache.servicemix.specs.scripting-api-1.0</artifactId>
-            <version>${servicemix.specs.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.specs</groupId>
-            <artifactId>org.apache.servicemix.specs.stax-api-1.0</artifactId>
-            <version>${servicemix.specs.version}</version>
-        </dependency>
-
-        <!-- Geronimo -->
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-annotation_1.0_spec</artifactId>
-            <version>${geronimo-annotation.version}</version>
-        </dependency>
-
-        <!-- Spring -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-tx</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-
-        <!-- Bundles -->
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.ant</artifactId>
-            <version>${ant.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.antlr</artifactId>
-            <version>${antlr.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.antlr-runtime</artifactId>
-            <version>${antlr-runtime.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.aopalliance</artifactId>
-            <version>${aopalliance.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.asm</artifactId>
-            <version>${asm.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.bcel</artifactId>
-            <version>${bcel.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.cglib</artifactId>
-            <version>${cglib.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.commons-beanutils</artifactId>
-            <version>${commons-beanutils.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.commons-codec</artifactId>
-            <version>${commons-codec.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.commons-collections</artifactId>
-            <version>${commons-collections.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.commons-lang</artifactId>
-            <version>${commons-lang.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.commons-httpclient</artifactId>
-            <version>${commons-httpclient.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.commons-net</artifactId>
-            <version>${commons-net.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.commons-pool</artifactId>
-            <version>${commons-pool.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.commons-vfs</artifactId>
-            <version>${commons-vfs.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.fastinfoset</artifactId>
-            <version>${fastinfoset.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.groovy</artifactId>
-            <version>${groovy.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.jasypt</artifactId>
-            <version>${jasypt.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.jaxb-impl</artifactId>
-            <version>${jaxb-impl.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.jdom</artifactId>
-            <version>${jdom.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.jdt-core</artifactId>
-            <version>${jdt-core.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.josql</artifactId>
-            <version>${josql.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.jruby</artifactId>
-            <version>${jruby.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.jsmpp</artifactId>
-            <version>${jsmpp.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.mvel</artifactId>
-            <version>${mvel.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.neethi</groupId>
-            <artifactId>neethi</artifactId>
-            <version>${neethi.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.opensaml</artifactId>
-            <version>${opensaml.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.oro</artifactId>
-            <version>${oro.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.oscore</artifactId>
-            <version>${oscore.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.osworkflow</artifactId>
-            <version>${osworkflow.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.propertyset</artifactId>
-            <version>${propertyset.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.quartz</artifactId>
-            <version>${quartz.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.rhino</artifactId>
-            <version>${rhino.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.saaj-impl</artifactId>
-            <version>${saaj-impl.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.saxon</artifactId>
-            <version>${saxon.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.snmp4j</artifactId>
-            <version>${snmp4j.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.velocity</artifactId>
-            <version>${velocity.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.wsdl4j</artifactId>
-            <version>${wsdl4j.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.xalan</artifactId>
-            <version>${xalan.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.xerces</artifactId>
-            <version>${xerces.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.xmlbeans</artifactId>
-            <version>${xmlbeans.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.xmlresolver</artifactId>
-            <version>${xmlresolver.bundle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.xmlsec</artifactId>
-            <version>${xmlsec.bundle.version}</version>
-        </dependency>
-        
-        <!-- Other Dependencies -->
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-xjc</artifactId>
-            <version>${jaxb-xjc.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.xml.bind</groupId>
-                    <artifactId>jsr173_api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sun.xml.bind</groupId>
-                    <artifactId>jaxb-impl</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>${jaxb-impl.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.xml.bind</groupId>
-                    <artifactId>jsr173_api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>javax.xml</groupId>
-                    <artifactId>jsr173</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>javax.activation</groupId>
-                    <artifactId>activation</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>javax.xml.bind</groupId>
-                    <artifactId>activation</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>javax.xml.bind</groupId>
-                    <artifactId>jaxb-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.osgi.compendium</artifactId>
-            <version>1.2.0</version>
-        </dependency>
+		<dependency>
+			<groupId>org.talend.esb.sts</groupId>
+			<artifactId>cxf-sts-war</artifactId>
+			<version>${project.version}</version>
+			<type>war</type>
+		</dependency>
 
 	</dependencies>
 
@@ -736,112 +405,24 @@
 							<descriptors>
                                 <descriptor>mvn:org.apache.karaf.assemblies.features/standard/${karaf.version}/xml/features</descriptor>
                                 <descriptor>mvn:org.apache.karaf.assemblies.features/enterprise/${karaf.version}/xml/features</descriptor>
-                                <descriptor>mvn:org.apache.cxf.karaf/apache-cxf/${cxf.version}/xml/features</descriptor>
-                                <descriptor>mvn:org.apache.activemq/activemq-karaf/${activemq.version}/xml/features</descriptor>
+<!--                                 <descriptor>mvn:org.apache.cxf.karaf/apache-cxf/${cxf.version}/xml/features</descriptor> -->
+<!--                                 <descriptor>mvn:org.apache.activemq/activemq-karaf/${activemq.version}/xml/features</descriptor> -->
 <!--                                 <descriptor>mvn:org.apache.camel.karaf/apache-camel/${camel.version}/xml/features</descriptor> -->
+                                <descriptor>mvn:org.apache.karaf.cellar/apache-karaf-cellar/${cellar.version}/xml/features</descriptor>
+                                <descriptor>mvn:org.jclouds.karaf/feature/${jclouds.version}/xml/features</descriptor>
 								<descriptor>file:${basedir}/target/classes/tif-features.xml</descriptor>
-								<descriptor>file:${basedir}/target/classes/camel-features.xml</descriptor>
+<!-- 								<descriptor>file:${basedir}/target/classes/camel-features.xml</descriptor> -->
 								<descriptor>file:${basedir}/../features/target/classes/features.xml</descriptor>
-								<descriptor>file:${basedir}/../job/features/target/classes/features.xml</descriptor>
 							</descriptors>
 							<features>
 								<!-- Core Features -->
 								<feature>spring</feature>
 								<feature>spring-dm</feature>
 								<feature>jetty</feature>
-								<!-- ActiveMQ Features -->
-								<feature>activemq</feature>
-								<feature>activemq-blueprint</feature>
-								<feature>activemq-spring</feature>
-								<!-- Camel Features -->
-								<feature>camel</feature>
-								<feature>camel-core</feature>
-								<feature>camel-spring</feature>
-								<feature>camel-blueprint</feature>
-								<feature>camel-test</feature>
-								<feature>camel-cxf</feature>
-								<feature>camel-cache</feature>
-								<feature>camel-castor</feature>
-								<feature>camel-crypto</feature>
-								<feature>camel-http</feature>
-								<feature>camel-http4</feature>
-								<feature>camel-mina</feature>
-								<feature>camel-jetty</feature>
-								<feature>camel-servlet</feature>
-								<feature>camel-jms</feature>
-								<feature>camel-jmx</feature>
-								<feature>camel-amqp</feature>
-								<feature>camel-atom</feature>
-								<feature>camel-aws</feature>
-								<feature>camel-bam</feature>
-								<feature>camel-bean-validator</feature>
-								<feature>camel-bindy</feature>
-								<feature>camel-cometd</feature>
-								<feature>camel-csv</feature>
-								<feature>camel-dozer</feature>
-								<!-- Disable this feature as there is a mistake in, see CAMEL-3637 -->
-								<!-- <feature>camel-eventAdmin</feature> -->
-								<feature>camel-exec</feature>
-								<feature>camel-flatpack</feature>
-								<feature>camel-freemarker</feature>
-								<feature>camel-ftp</feature>
-								<feature>camel-guice</feature>
-								<feature>camel-groovy</feature>
-								<feature>camel-hl7</feature>
-								<feature>camel-hawtdb</feature>
-								<feature>camel-ibatis</feature>
-								<feature>camel-irc</feature>
-								<feature>camel-jackson</feature>
-								<feature>camel-jasypt</feature>
-								<feature>camel-jaxb</feature>
-								<feature>camel-jcr</feature>
-								<feature>camel-jing</feature>
-								<feature>camel-jibx</feature>
-								<feature>camel-jdbc</feature>
-								<feature>camel-josql</feature>
-								<feature>camel-jpa</feature>
-								<feature>camel-jxpath</feature>
-								<feature>camel-juel</feature>
-								<feature>camel-kestrel</feature>
-								<feature>camel-ldap</feature>
-								<feature>camel-lucene</feature>
-								<feature>camel-mail</feature>
-								<feature>camel-msv</feature>
-								<feature>camel-mvel</feature>
-								<feature>camel-nagios</feature>
-								<feature>camel-netty</feature>
-								<feature>camel-ognl</feature>
-								<feature>camel-paxlogging</feature>
-								<feature>camel-printer</feature>
-								<feature>camel-protobuf</feature>
-								<feature>camel-quartz</feature>
-								<feature>camel-quickfix</feature>
-								<feature>camel-rmi</feature>
-								<feature>camel-routebox</feature>
-								<feature>camel-rss</feature>
-								<feature>camel-saxon</feature>
-								<feature>camel-scala</feature>
-								<feature>camel-script</feature>
-								<feature>camel-sip</feature>
-								<feature>camel-shiro</feature>
-								<feature>camel-smpp</feature>
-								<feature>camel-snmp</feature>
-								<feature>camel-soap</feature>
-								<feature>camel-spring-javaconfig</feature>
-								<feature>camel-spring-security</feature>
-								<feature>camel-spring-ws</feature>
-								<feature>camel-sql</feature>
-								<feature>camel-stream</feature>
-								<feature>camel-string-template</feature>
-								<feature>camel-syslog</feature>
-								<feature>camel-tagsoup</feature>
-								<feature>camel-velocity</feature>
-								<feature>camel-xmlbeans</feature>
-								<feature>camel-xmlsecurity</feature>
-								<feature>camel-xmpp</feature>
-								<feature>camel-xstream</feature>
-								<!-- CXF Features -->
-								<feature>cxf</feature>
+								<feature>webconsole</feature>
+								<!-- tesb-core includes ActiveMQ, Camel and CXF Features  -->
+								<feature>tesb-core</feature>
+								
 								<!-- TIF Features -->
 								<feature>tif-core</feature>
 								<feature>tif-test</feature>
@@ -858,10 +439,15 @@
 								<feature>tesb-derby-starter</feature>
 								<feature>tesb-sam-server</feature>
 								<feature>tesb-locator-client</feature>
-								<feature>tesb-locator-proxy</feature>
+								<feature>tesb-locator-soap-service</feature>
+								<feature>tesb-locator-rest-service</feature>
 								<feature>talend-job-api</feature>
 								<feature>talend-job-controller</feature>
 								<feature>tesb-zookeeper-server</feature>
+								<feature>tesb-sts</feature>
+								<!-- Karaf Cellar Features -->
+								<feature>cellar</feature>
+								<feature>cellar-webconsole</feature>
 							</features>
 							<repository>target/features-repo</repository>
 						</configuration>
@@ -979,6 +565,33 @@
 						</configuration>
 					</execution>
 					<execution>
+						<id>unpack-activemq</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.apache.activemq</groupId>
+									<artifactId>apache-activemq</artifactId>
+									<version>${activemq.version}</version>
+									<type>tar.gz</type>
+									<classifier>bin</classifier>
+									<outputDirectory>target/dependencies/activemq-unix</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.apache.activemq</groupId>
+									<artifactId>apache-activemq</artifactId>
+									<version>${activemq.version}</version>
+									<type>zip</type>
+									<classifier>bin</classifier>
+									<outputDirectory>target/dependencies/activemq-win</outputDirectory>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+					<execution>
 						<id>unpack-tif-examples</id>
 						<phase>generate-resources</phase>
 						<goals>
@@ -990,9 +603,9 @@
 									<groupId>com.talend.if.assembly</groupId>
 									<artifactId>talend-if</artifactId>
 									<version>${tif.version}</version>
-									<type>tar.gz</type>
 									<classifier>examples</classifier>
-									<outputDirectory>target/dependencies/tif-examples</outputDirectory>
+									<type>tar.gz</type>
+									<outputDirectory>target/dependencies</outputDirectory>
 								</artifactItem>
 							</artifactItems>
 						</configuration>
@@ -1009,9 +622,9 @@
 									<groupId>com.talend.sf.assembly</groupId>
 									<artifactId>talend-sf</artifactId>
 									<version>${tsf.version}</version>
-									<type>zip</type>
 									<classifier>examples</classifier>
-									<outputDirectory>target/dependencies/tsf-examples</outputDirectory>
+									<type>zip</type>
+									<outputDirectory>target/dependencies</outputDirectory>
 								</artifactItem>
 							</artifactItems>
 						</configuration>
@@ -1027,7 +640,7 @@
 								<artifactItem>
 									<groupId>org.talend.esb.docs</groupId>
 									<artifactId>esb-docs</artifactId>
-									<version>${project.version}</version>
+									<version>${tesb-doc.version}</version>
 									<type>zip</type>
 									<classifier>pdf</classifier>
 									<outputDirectory>target/docs</outputDirectory>
@@ -1099,6 +712,11 @@
 									</fileset>
 									<flattenmapper />
 								</copy>
+								<copy todir="target/add-ons/locator">
+									<fileset dir="${basedir}/../locator-service/locator-service-common/src/main/resources/model">
+										<include name="**/*.*" />
+									</fileset>
+								</copy>
 								<copy todir="target/add-ons/job">
 									<fileset dir="${basedir}/../job">
 										<include name="**/target/*.jar" />
@@ -1119,7 +737,7 @@
 											<present targetdir="target/dependencies/cxf/apache-cxf-${cxf.version}/modules">
 												<mapper type="flatten" />
 											</present>
-											<present targetdir="target/add-ons/monitoring">
+											<present targetdir="target/add-ons/sam">
 												<mapper type="flatten" />
 											</present>
 											<present targetdir="target/add-ons/locator">
@@ -1142,7 +760,7 @@
 											<present targetdir="target/dependencies/cxf/apache-cxf-${cxf.version}/modules">
 												<mapper type="flatten" />
 											</present>
-											<present targetdir="target/add-ons/monitoring">
+											<present targetdir="target/add-ons/sam">
 												<mapper type="flatten" />
 											</present>
 											<present targetdir="target/add-ons/locator">
@@ -1165,7 +783,7 @@
 											<present targetdir="target/dependencies/cxf/apache-cxf-${cxf.version}/modules">
 												<mapper type="flatten" />
 											</present>
-											<present targetdir="target/add-ons/monitoring">
+											<present targetdir="target/add-ons/sam">
 												<mapper type="flatten" />
 											</present>
 											<present targetdir="target/add-ons/locator">
@@ -1198,7 +816,7 @@
 				<version>2.2.1</version>
 				<executions>
 					<execution>
-						<id>unix-bin</id>
+						<id>bin</id>
 						<phase>package</phase>
 						<goals>
 							<goal>single</goal>
@@ -1206,24 +824,11 @@
 						<configuration>
 							<descriptors>
 								<descriptor>src/main/descriptors/unix-bin.xml</descriptor>
-							</descriptors>
-							<appendAssemblyId>false</appendAssemblyId>
-							<tarLongFileMode>gnu</tarLongFileMode>
-							<workDirectory>${project.build.directory}/assembly/unix-bin</workDirectory>
-						</configuration>
-					</execution>
-					<execution>
-						<id>win-bin</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<descriptors>
 								<descriptor>src/main/descriptors/win-bin.xml</descriptor>
 							</descriptors>
 							<appendAssemblyId>false</appendAssemblyId>
-							<workDirectory>${project.build.directory}/assembly/win-bin</workDirectory>
+							<tarLongFileMode>gnu</tarLongFileMode>
+                            <finalName>TESB_SE-V${packages.version}</finalName>
 						</configuration>
 					</execution>
 					<execution>
@@ -1238,7 +843,7 @@
 							</descriptors>
 							<appendAssemblyId>true</appendAssemblyId>
 							<tarLongFileMode>gnu</tarLongFileMode>
-							<workDirectory>${project.build.directory}/assembly/examples</workDirectory>
+                            <finalName>TESB_SE-V${packages.version}</finalName>
 						</configuration>
 					</execution>
 				</executions>

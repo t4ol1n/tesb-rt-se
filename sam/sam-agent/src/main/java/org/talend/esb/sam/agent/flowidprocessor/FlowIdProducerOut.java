@@ -23,6 +23,7 @@ import java.lang.ref.WeakReference;
 import java.util.logging.Logger;
 
 import org.apache.cxf.interceptor.Fault;
+import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageUtils;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
@@ -36,7 +37,7 @@ public class FlowIdProducerOut<T extends Message> extends
 
 	protected static Logger logger = Logger.getLogger(FlowIdProducerOut.class
 			.getName());
-
+	
 	public FlowIdProducerOut() {
 		super(Phase.USER_LOGICAL);
 	}
@@ -49,9 +50,10 @@ public class FlowIdProducerOut<T extends Message> extends
 		if (MessageUtils.isRequestor(message)) {
 			handleRequestOut(message);
 		} else {
-			handleResponseOut(message);
+				handleResponseOut(message);
 		}
-		
+
+		// write FlowId to HTTP and Soap layer
 		String flowId = FlowIdHelper.getFlowId(message);
 		FlowIdProtocolHeaderCodec.writeFlowId(message, flowId);
 		FlowIdSoapCodec.writeFlowId(message, flowId);
@@ -59,22 +61,43 @@ public class FlowIdProducerOut<T extends Message> extends
 	}
 
 	protected void handleResponseOut(T message) throws Fault {
-		logger.fine("handleResponseOut");
-
 		Message reqMsg = message.getExchange().getInMessage();
 		if (reqMsg == null) {
-			logger.warning("getInMessage is null");
+			logger.warning("InMessage is null!");
 			return;
 		}
-
+		
+		//No flowId for oneway message
+		Exchange ex = reqMsg.getExchange();
+		if (ex.isOneWay()) return;
+		
 		String reqFid = FlowIdHelper.getFlowId(reqMsg);
+
+		//if some interceptor throws fault before FlowIdProducerIn fired 
+		if (reqFid == null) {
+			logger.fine("Some interceptor throws fault.Setting FlowId in response.");
+			reqFid = FlowIdProtocolHeaderCodec.readFlowId(message);
+		}
+		
+		if (reqFid == null) {
+			reqFid = FlowIdSoapCodec.readFlowId(message);
+		}
+
+		if (reqFid != null) {
+			logger.fine("FlowId '" + reqFid + "' found in incoming message.");
+		} else {
+			reqFid = ContextUtils.generateUUID();
+			logger.fine("No flowId found in incoming message! Generate new flowId " + reqFid);
+		}
+		
 		FlowIdHelper.setFlowId(message, reqFid);
 
 	}
-
+	
 	protected void handleRequestOut(T message) throws Fault {
 		String flowId = FlowIdHelper.getFlowId(message);
-		if (flowId == null && message.containsKey(PhaseInterceptorChain.PREVIOUS_MESSAGE)) {
+		if (flowId == null
+				&& message.containsKey(PhaseInterceptorChain.PREVIOUS_MESSAGE)) {
 			// Web Service consumer is acting as an intermediary
 			@SuppressWarnings("unchecked")
 			WeakReference<Message> wrPreviousMessage = (WeakReference<Message>) message
@@ -86,14 +109,14 @@ public class FlowIdProducerOut<T extends Message> extends
 			}
 
 		}
-		
+
 		if (flowId == null) {
 			// No flowId found. Generate one.
 			flowId = ContextUtils.generateUUID();
-			logger.fine("Created new FlowId '" + flowId + "'");
+			logger.fine("Generate new flowId '" + flowId + "'");
 		}
 
 		FlowIdHelper.setFlowId(message, flowId);
 	}
-
+	
 }

@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.talend.esb.examples.rent-a-car</groupId>
         <artifactId>crmservice</artifactId>
-        <version>5.0-SNAPSHOT</version>
+        <version>5.0.1-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
@@ -42,10 +42,6 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Require-Bundle>
-                            org.apache.cxf.bundle,
-                            org.springframework.beans
-                        </Require-Bundle>
                     </instructions>
                 </configuration>
             </plugin>

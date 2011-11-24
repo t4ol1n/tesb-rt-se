@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<!--
+  #%L
+  Talend :: ESB :: Job :: Controller
+  %%
+  Copyright (C) 2011 Talend Inc.
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
 <beans
 	xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -13,13 +31,13 @@
 	"
 >
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
-	<import resource="classpath:META-INF/cxf/osgi/cxf-extension-osgi.xml" />
 
     <!-- (1) SL
     <import resource="classpath:META-INF/tesb/locator/beans-osgi.xml" />
      -->
-    <!-- SAM -->
+    <!-- (2) SAM
     <import resource="classpath:META-INF/tesb/agent-osgi.xml" />
+     -->
 
 	<jaxws:endpoint
 		xmlns:serviceNamespace="http://customerservice.example.com/"
@@ -28,6 +46,7 @@
 		address="http://localhost:9090/CustomerServicePort"
 		wsdlLocation="classpath:/model/CustomerService.wsdl"
 		implementor="#genericServiceProvider"
+		id="service"
 	>
 	    <jaxws:features>
 		    <!-- (1) SL
@@ -38,10 +57,6 @@
 		     -->
 	    </jaxws:features>
     </jaxws:endpoint>
-
-    <!-- CustomInfoHandler must as a bean because setHandlers() in EventCollectorImpl
-         marked as Autowired. Otherwise, it will not work after testing. (c) Xilai Dai -->
-    <bean id="customInfoHandler" class="org.talend.esb.sam.common.handler.impl.CustomInfoHandler"/>
 
 	<bean id="genericServiceProvider" class="org.talend.esb.job.controller.GenericServiceProvider">
 		<property name="operations">
@@ -59,7 +74,22 @@
         <property name="jobLauncher">
 		    <osgi:reference interface="org.talend.esb.job.controller.JobLauncher"/>
         </property>
-        <property name="customInfoHandler" ref="customInfoHandler"/>
+	    <!-- (2) SAM
+        <property name="eventFeature" ref="eventFeature"/>
+	     -->
 	</bean>
+
+	<osgi:service ref="genericServiceProvider" interface="org.osgi.service.cm.ManagedService">
+		<osgi:service-properties>
+			<entry key="service.pid" value="CustomerService" />
+		</osgi:service-properties>
+	</osgi:service>
+
+	<osgi:service ref="service" interface="javax.xml.ws.Endpoint">
+		<osgi:service-properties>
+			<entry key="name" value="CustomerService" />
+			<entry key="type" value="service" />
+		</osgi:service-properties>
+	</osgi:service>
 
 </beans>

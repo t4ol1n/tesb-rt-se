@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.talend.esb</groupId>
         <artifactId>job</artifactId>
-        <version>5.0-SNAPSHOT</version>
+        <version>5.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -24,10 +25,17 @@
         </dependency>
         <dependency>
             <groupId>org.talend.esb</groupId>
-            <artifactId>sam-common</artifactId>
+            <artifactId>sam-agent</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.talend.esb</groupId>
+            <artifactId>locator</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
@@ -41,28 +49,44 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-ws-security</artifactId>
+            <version>${cxf.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-ws-policy</artifactId>
+            <version>${cxf.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.apache.servicemix.bundles</groupId>
             <artifactId>org.apache.servicemix.bundles.dom4j</artifactId>
             <version>${dom4j.bundle.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Test dependencies -->
         <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.jaxen</artifactId>
-            <version>${jaxen.bundle.version}</version>
-            <scope>runtime</scope>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.servicemix.specs</groupId>
-            <artifactId>org.apache.servicemix.specs.saaj-api-1.3</artifactId>
-            <version>${servicemix.specs.version}</version>
-            <scope>runtime</scope>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymock</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.saaj-impl</artifactId>
-            <version>${saaj-impl.bundle.version}</version>
-            <scope>runtime</scope>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -73,25 +97,87 @@
                 <artifactId>maven-bundle-plugin</artifactId>
                 <configuration>
                     <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Require-Bundle>
                             org.apache.cxf.bundle,
                             org.springframework.beans,
                             org.springframework.context,
                             org.springframework.osgi.core,
-                            locator,
                             sam-agent,
-                            sam-common,
-                            org.apache.servicemix.specs.saaj-api-1.3,
-                            org.apache.servicemix.bundles.saaj-impl
+                            sam-common
                         </Require-Bundle>
-                        <Export-Package>
-                            org.talend.esb.job.controller;version=${project.version}
-                        </Export-Package>
                         <Private-Package>
                             org.talend.esb.job.controller.internal*
                         </Private-Package>
                     </instructions>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-artifacts</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>etc/org.talend.esb.job.cfg</file>
+                                    <type>cfg</type>
+                                    <classifier>org.talend.esb.job</classifier>
+                                </artifact>
+                                <artifact>
+                                    <file>etc/org.talend.esb.job.token.policy</file>
+                                    <type>policy</type>
+                                    <classifier>org.talend.esb.job.token</classifier>
+                                </artifact>
+                                <artifact>
+                                    <file>etc/org.talend.esb.job.saml.policy</file>
+                                    <type>policy</type>
+                                    <classifier>org.talend.esb.job.saml</classifier>
+                                </artifact>
+                                <artifact>
+                                    <file>etc/org.talend.esb.job.service.cfg</file>
+                                    <type>cfg</type>
+                                    <classifier>org.talend.esb.job.service</classifier>
+                                </artifact>
+                                <artifact>
+                                    <file>etc/org.talend.esb.job.client.cfg</file>
+                                    <type>cfg</type>
+                                    <classifier>org.talend.esb.job.client</classifier>
+                                </artifact>
+                                <artifact>
+                                    <file>etc/org.talend.esb.job.client.sts.cfg</file>
+                                    <type>cfg</type>
+                                    <classifier>org.talend.esb.job.client.sts</classifier>
+                                </artifact>
+                                <artifact>
+                                    <file>etc/keystores/clientKeystore.properties</file>
+                                    <type>properties</type>
+                                    <classifier>clientKeystore</classifier>
+                                </artifact>
+                                <artifact>
+                                    <file>etc/keystores/clientstore.jks</file>
+                                    <type>jks</type>
+                                    <classifier>clientstore</classifier>
+                                </artifact>
+                                <artifact>
+                                    <file>etc/keystores/serviceKeystore.properties</file>
+                                    <type>properties</type>
+                                    <classifier>serviceKeystore</classifier>
+                                </artifact>
+                                <artifact>
+                                    <file>etc/keystores/servicestore.jks</file>
+                                    <type>jks</type>
+                                    <classifier>servicestore</classifier>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

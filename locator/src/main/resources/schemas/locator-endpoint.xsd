@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema
+    targetNamespace="http://talend.org/schemas/esb/locator/content/20011/11"
+    elementFormDefault="qualified"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://talend.org/schemas/esb/locator/content/20011/11"
+    xmlns:wsa="http://www.w3.org/2005/08/addressing">
+
+    <import namespace = "http://www.w3.org/2005/08/addressing" 
+            schemaLocation="http://www.w3.org/2005/08/addressing/ws-addr.xsd"/>
+
+    <element name="EndpointData" type="tns:EndpointDataType"/>
+
+    <complexType name="EndpointDataType">
+    	<sequence>
+            <element id="endpointReference" ref="wsa:EndpointReference" minOccurs="1" maxOccurs="1"/>
+            <element id="properties" ref="tns:ServiceLocatorProperties" minOccurs="0" maxOccurs="1"/>
+    		<element name="LastTimeStarted" type="long" minOccurs="1" maxOccurs="1" default="-1"/>
+    		<element name="LastTimeStopped" type="long" minOccurs="1" maxOccurs="1" default="-1"/>
+    		<element name="Binding" type="tns:BindingType" minOccurs="1" maxOccurs="1"/>
+    		<element name="Transport" type="tns:TransportType" minOccurs="1" maxOccurs="1"/>
+    		<any id="extensions" namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/> 
+    	</sequence>
+   		<anyAttribute namespace="##any" processContents="lax" />
+    </complexType>
+
+    <element name="ServiceLocatorProperties" type="tns:ServiceLocatorPropertiesType"/>
+
+    <complexType name="ServiceLocatorPropertiesType">
+        <sequence>
+            <element name="Entry" type="tns:EntryType" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence> 	
+    </complexType>
+
+    <complexType name="EntryType">
+        <sequence>
+    		<element name="Value" type="string" minOccurs="1" maxOccurs="unbounded"/>
+        </sequence>
+        <attribute name="key" type="string"/>
+    </complexType>
+
+    <simpleType name="BindingType">
+        <restriction base="string">
+            <enumeration value="SOAP11"/>
+            <enumeration value="SOAP12"/>
+            <enumeration value="JAXRS"/>
+            <enumeration value="OTHER"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="TransportType">
+        <restriction base="string">
+            <enumeration value="HTTP"/>
+            <enumeration value="HTTPS"/>
+            <enumeration value="JMS"/>
+            <enumeration value="OTHER"/>
+        </restriction>
+    </simpleType>
+</schema>

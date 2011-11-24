@@ -19,9 +19,7 @@
  */
 package org.talend.esb.job.console;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
-import org.talend.esb.job.controller.Controller;
+import java.io.IOException;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -29,7 +27,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+
+import org.osgi.framework.BundleContext;
 
 /**
  * Run servlet
@@ -55,6 +54,7 @@ public class RunServlet extends HttpServlet {
         String name = request.getParameter("name");
         String args = request.getParameter("args");
         String error = null;
+/*
         if (name != null && name.trim().length() > 0) {
             // looking for the controler
             ServiceReference ref = bundleContext.getServiceReference(Controller.class.getName());
@@ -75,6 +75,7 @@ public class RunServlet extends HttpServlet {
                 bundleContext.ungetService(ref);
             }
         }
+*/
         if (error != null) {
             response.sendRedirect("home.do?error=" + error);
         } else {

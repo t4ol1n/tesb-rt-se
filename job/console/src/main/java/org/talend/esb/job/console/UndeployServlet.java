@@ -19,10 +19,7 @@
  */
 package org.talend.esb.job.console;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
-import org.talend.esb.job.controller.Controller;
+import java.io.IOException;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -30,7 +27,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+
+import org.osgi.framework.BundleContext;
 
 /**
  * Undeploy servlet.
@@ -53,29 +51,29 @@ public class UndeployServlet extends HttpServlet {
     }
 
     public void doIt(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String name = request.getParameter("name");
-        String error = null;
-        if (name != null && name.trim().length() > 0) {
-            ServiceReference ref = bundleContext.getServiceReference(Controller.class.getName());
-            if (ref != null) {
-                Controller controller = (Controller) bundleContext.getService(ref);
-                if (controller != null) {
-                    try {
-                        Bundle bundle = controller.getBundle(name);
-                        bundle.stop();
-                        bundle.uninstall();
-                    } catch (Exception e) {
-                        error = e.getMessage();
-                    }
-                }
-                bundleContext.ungetService(ref);
-            }
-        }
-        if (error != null) {
-            response.sendRedirect("home.do?error=" + error);
-        } else {
-            response.sendRedirect("home.do");
-        }
+//        String name = request.getParameter("name");
+//        String error = null;
+//        if (name != null && name.trim().length() > 0) {
+//            ServiceReference ref = bundleContext.getServiceReference(Controller.class.getName());
+//            if (ref != null) {
+//                Controller controller = (Controller) bundleContext.getService(ref);
+//                if (controller != null) {
+//                    try {
+//                        Bundle bundle = controller.getBundle(name);
+//                        bundle.stop();
+//                        bundle.uninstall();
+//                    } catch (Exception e) {
+//                        error = e.getMessage();
+//                    }
+//                }
+//                bundleContext.ungetService(ref);
+//            }
+//        }
+//        if (error != null) {
+//            response.sendRedirect("home.do?error=" + error);
+//        } else {
+//            response.sendRedirect("home.do");
+//        }
     }
 
 }

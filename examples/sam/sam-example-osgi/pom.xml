@@ -9,7 +9,7 @@
     <parent>
         <groupId>org.talend.esb.examples</groupId>
         <artifactId>sam-examples</artifactId>
-        <version>5.0-SNAPSHOT</version>
+        <version>5.0.1-SNAPSHOT</version>
     </parent>
 
     <name>Service Activity Monitoring :: Example Service OSGi</name>
@@ -37,7 +37,14 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Require-bundle>org.apache.cxf.bundle,org.springframework.beans,org.springframework.context,sam-agent</Require-bundle>
+                        <Require-bundle>
+						    org.apache.cxf.bundle,
+							org.springframework.beans,
+							org.springframework.context,
+							sam-agent,
+							sam-common,
+							org.springframework.osgi.core
+						</Require-bundle>
                     </instructions>
                 </configuration>
             </plugin>

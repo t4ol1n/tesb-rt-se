@@ -19,269 +19,184 @@
  */
 package org.talend.esb.job.controller.internal;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.logging.Logger;
 
-import javax.xml.namespace.QName;
-
-import org.apache.cxf.Bus;
-import org.apache.cxf.feature.AbstractFeature;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
-import org.talend.esb.job.controller.ESBEndpointConstants;
-import org.talend.esb.job.controller.ESBEndpointConstants.OperationStyle;
-import org.talend.esb.job.controller.ESBProviderCallbackController;
+import org.osgi.framework.Constants;
+import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.cm.ManagedService;
+import org.talend.esb.job.controller.GenericOperation;
 import org.talend.esb.job.controller.JobLauncher;
-import org.talend.esb.sam.common.handler.impl.CustomInfoHandler;
 
-import routines.system.api.ESBConsumer;
-import routines.system.api.ESBEndpointInfo;
 import routines.system.api.ESBEndpointRegistry;
-import routines.system.api.ESBJobInterruptedException;
-import routines.system.api.ESBProviderCallback;
+import routines.system.api.TalendESBJob;
+import routines.system.api.TalendESBRoute;
 import routines.system.api.TalendJob;
 
-public class JobLauncherImpl implements JobLauncher, ESBEndpointRegistry,
-        JobThreadListener {
+public class JobLauncherImpl implements JobLauncher, JobListener {
 
-    private AbstractFeature serviceLocator;
-    private AbstractFeature serviceActivityMonitoring;
-    private CustomInfoHandler customInfoHandler;
-    private Bus bus;
+    public static final Logger LOG = Logger.getLogger(JobLauncherImpl.class.getName());
+
     private BundleContext bundleContext;
+    private ExecutorService executorService;
+    private ESBEndpointRegistry endpointRegistry;
 
-    private final Map<ESBProviderKey, Collection<ESBProvider> > endpoints =
-            new ConcurrentHashMap<ESBProviderKey, Collection<ESBProvider>>();
-    private final Map<TalendJob, Thread > jobs =
-            new ConcurrentHashMap<TalendJob, Thread>();
-    private ThreadLocal<RuntimeESBConsumer> tlsConsumer =
-            new ThreadLocal<RuntimeESBConsumer>();
-
-    public void setBus(Bus bus) {
-        this.bus = bus;
-    }
-
-    public void setServiceLocator(AbstractFeature serviceLocator) {
-        this.serviceLocator = serviceLocator;
-    }
-
-    public void setServiceActivityMonitoring(
-            AbstractFeature serviceActivityMonitoring) {
-        this.serviceActivityMonitoring = serviceActivityMonitoring;
-    }
-
-    public void setCustomInfoHandler(CustomInfoHandler customInfoHandler) {
-        this.customInfoHandler = customInfoHandler;
-    }
+    private Map<String, JobTask> jobTasks = new ConcurrentHashMap<String, JobTask>();
+    private Map<String, JobTask> routeTasks = new ConcurrentHashMap<String, JobTask>();
+    private Map<String, TalendESBJob> esbJobs = new ConcurrentHashMap<String, TalendESBJob>();
+    private Map<String, OperationTask> operationTasks = new ConcurrentHashMap<String, OperationTask>();
+    private Map<String, ServiceRegistration> serviceRegistrations =
+            new ConcurrentHashMap<String, ServiceRegistration>();
 
     public void setBundleContext(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
     }
 
-    public void startJob(final TalendJob talendJob, final String[] args) {
-        final ESBProviderCallbackController controller =
-            new LazyESBProviderCallbackController();
-        startJob(new ESBJobThread(talendJob, args, controller, this, this));
+    public void setExecutorService(ExecutorService executorService) {
+        this.executorService = executorService;
     }
 
-    public void startJob(String name,
-        final ESBProviderCallbackController controller) {
-        // ControllerImpl
-        ServiceReference[] references;
-        try {
-            references = bundleContext.getServiceReferences(
-                TalendJob.class.getName(), "(name=" + name + ")");
-        } catch (InvalidSyntaxException e) {
-            throw new IllegalArgumentException(e);
-        }
-        if (references == null) {
-            throw new IllegalArgumentException("Talend job '" + name + "' not found");
-        }
-        final TalendJob talendJob = (TalendJob) bundleContext.getService(references[0]);
-        startJob(new ESBJobThread(talendJob, new String[0], controller, this, this));
+    public void setEndpointRegistry(ESBEndpointRegistry esbEndpointRegistry) {
+        endpointRegistry = esbEndpointRegistry;
     }
 
-    private void startJob(final Thread thread) {
-        thread.setContextClassLoader(this.getClass().getClassLoader());
-        thread.start();
-    }
-
-    public void stopJob(final TalendJob talendJob) {
-        Thread thread = jobs.get(talendJob);
-        if (thread != null) {
-            thread.interrupt();
+    @Override
+    public void esbJobAdded(TalendESBJob esbJob, String name) {
+        LOG.info("Adding ESB job " + name + ".");
+        esbJob.setEndpointRegistry(endpointRegistry);
+        if (isConsumerOnly(esbJob)) {
+            startJob(esbJob, name);
+        } else {
+            esbJobs.put(name, esbJob);
         }
     }
 
-    public void jobStarted(TalendJob talendJob, Thread thread) {
-        jobs.put(talendJob, thread);
-    }
-
-    public void jobFinished(TalendJob talendJob, Thread thread) {
-        Thread registeredThread = jobs.remove(talendJob);
-        if (registeredThread != thread) {
-            throw new IllegalArgumentException(
-                "Different threads found for the talend job");
-        }
-
-        final RuntimeESBConsumer runtimeESBConsumer = tlsConsumer.get();
-        if (runtimeESBConsumer != null) {
-            runtimeESBConsumer.destroy();
-        }
-    }
-
-    private ESBProviderCallback createESBProvider(final Map<String, Object> props) {
-        final String publishedEndpointUrl = (String)props.get(ESBEndpointConstants.PUBLISHED_ENDPOINT_URL);
-        final QName serviceName = QName.valueOf((String)props.get(ESBEndpointConstants.SERVICE_NAME));
-        final QName portName = QName.valueOf((String)props.get(ESBEndpointConstants.PORT_NAME));
-
-        ESBProviderKey key = new ESBProviderKey(serviceName, portName);
-        Collection<ESBProvider> esbProviders = endpoints.get(key);
-        if(null == esbProviders) {
-            esbProviders = new ArrayList<ESBProvider>(1);
-            endpoints.put(key, esbProviders);
-        }
-
-        // TODO: add publishedEndpointUrl to ESBProviderKey
-        ESBProvider esbProvider = null;
-        for(ESBProvider provider : esbProviders) {
-            if(publishedEndpointUrl.equals(provider.getPublishedEndpointUrl())) {
-                esbProvider = provider;
-                break;
-            }
-        }
-        if(esbProvider == null) {
-            boolean useServiceLocator =
-                ((Boolean)props.get(ESBEndpointConstants.USE_SERVICE_LOCATOR)).booleanValue();
-            boolean useServiceActivityMonitor =
-                ((Boolean)props.get(ESBEndpointConstants.USE_SERVICE_ACTIVITY_MONITOR)).booleanValue();
-
-            esbProvider = new ESBProvider(publishedEndpointUrl,
-                serviceName,
-                portName,
-                useServiceLocator ? serviceLocator : null,
-                useServiceActivityMonitor ? serviceActivityMonitoring : null,
-                customInfoHandler);
-            esbProvider.run(bus);
-            esbProviders.add(esbProvider);
-        }
-
-        final String operationName = (String)props.get(ESBEndpointConstants.DEFAULT_OPERATION_NAME);
-        ESBProviderCallback esbProviderCallback =
-            esbProvider.createESBProviderCallback(operationName,
-                OperationStyle.isRequestResponse((String)props.get(ESBEndpointConstants.COMMUNICATION_STYLE)));
-
-        return esbProviderCallback;
-    }
-
-    private void destroyESBProvider(final Map<String, Object> props) {
-        final QName serviceName = QName.valueOf((String)props.get(ESBEndpointConstants.SERVICE_NAME));
-        final QName portName = QName.valueOf((String)props.get(ESBEndpointConstants.PORT_NAME));
-        final String publishedEndpointUrl = (String)props.get(ESBEndpointConstants.PUBLISHED_ENDPOINT_URL);
-
-        final Collection<ESBProvider> esbProviders = endpoints.get(
-            new ESBProviderKey(serviceName, portName));
-        if (esbProviders != null) {
-            for (ESBProvider esbProvider : esbProviders) {
-                if(publishedEndpointUrl.equals(esbProvider.getPublishedEndpointUrl())) {
-                    final String operationName = (String)props.get(ESBEndpointConstants.DEFAULT_OPERATION_NAME);
-                    if(esbProvider.destroyESBProviderCallback(operationName)) {
-                        esbProviders.remove(esbProvider);
-                    }
-                    break;
-                }
+    @Override
+    public void esbJobRemoved(TalendESBJob esbJob, String name) {
+        LOG.info("Removing ESB job " + name + ".");
+        if (isConsumerOnly(esbJob)) {
+            stopJob(esbJob, name);
+        } else {
+            esbJobs.remove(name);
+            OperationTask task = operationTasks.remove(name);
+            if (task != null) {
+                task.stop();
             }
         }
     }
 
     @Override
-    public ESBConsumer createConsumer(ESBEndpointInfo endpoint) {
-        final Map<String, Object> props = endpoint.getEndpointProperties();
+    public void routeAdded(TalendESBRoute route, String name) {
+        LOG.info("Adding route " + name + ".");
 
-        final QName serviceName = QName.valueOf((String)props.get(ESBEndpointConstants.SERVICE_NAME));
-        final QName portName = QName.valueOf((String)props.get(ESBEndpointConstants.PORT_NAME));
-        final String operationName = (String)props.get(ESBEndpointConstants.DEFAULT_OPERATION_NAME);
+        RouteAdapter adapter = new RouteAdapter(route, name);
 
-        ESBConsumer esbConsumer = null;
-		/*
-		 * commenting out this code coz of issue https://jira.sopera.de/browse/TESB-2074
-		 * If we get the consumer in the following way, SAM featuer is not set for the consumer
-		 * hence the consumer doesnt send out SAM events.
-		Collection<ESBProvider> esbProviders = endpoints.get(
-				new ESBProviderKey(serviceName, portName));
-		if(esbProviders != null) {
-			for(ESBProvider provider : esbProviders) {
-				esbConsumer = provider.getESBProviderCallback(operationName);
-				if(esbConsumer != null) {
-					break;
-				}
-			}
-		}
+        routeTasks.put(name, adapter);
 
-		// create generic consumer
-		if(esbConsumer == null) {
-		*/
-            final String publishedEndpointUrl = (String)props.get(ESBEndpointConstants.PUBLISHED_ENDPOINT_URL);
-            boolean useServiceLocator =
-                ((Boolean)props.get(ESBEndpointConstants.USE_SERVICE_LOCATOR)).booleanValue();
-            boolean useServiceActivityMonitor =
-                ((Boolean)props.get(ESBEndpointConstants.USE_SERVICE_ACTIVITY_MONITOR)).booleanValue();
-            final RuntimeESBConsumer runtimeESBConsumer = new RuntimeESBConsumer(
-                serviceName,
-                portName,
-                operationName,
-                publishedEndpointUrl,
-                OperationStyle.isRequestResponse((String)props.get(ESBEndpointConstants.COMMUNICATION_STYLE)),
-                useServiceLocator ? serviceLocator : null,
-                useServiceActivityMonitor ? serviceActivityMonitoring : null,
-                customInfoHandler,
-                bus);
-            tlsConsumer.set(runtimeESBConsumer);
-            esbConsumer = runtimeESBConsumer;
-		//}
-        return esbConsumer;
+        ServiceRegistration sr = bundleContext.registerService(
+                ManagedService.class.getName(), adapter,
+                getManagedServiceProperties(name));
+        serviceRegistrations.put(name, sr);
+        executorService.execute(adapter);
     }
 
-    class LazyESBProviderCallbackController
-            implements ESBProviderCallbackController, ESBProviderCallback {
+    @Override
+    public void routeRemoved(TalendESBRoute route, String name) {
+        LOG.info("Removing route " + name + ".");
 
-        private ESBEndpointInfo endpointInfo;
-        private ESBProviderCallback delegate;
-
-        public ESBProviderCallback createESBProviderCallback(
-            final ESBEndpointInfo esbEndpointInfo) {
-            this.endpointInfo = esbEndpointInfo;
-            // Inject lazy initialization callback to the job
-            return this;
+        JobTask routeTask = routeTasks.remove(name);
+        if (routeTask != null) {
+            routeTask.stop();
         }
 
-        public void destroyESBProviderCallback() {
-            if (null != endpointInfo) {
-                destroyESBProvider(endpointInfo.getEndpointProperties());
+        ServiceRegistration sr = serviceRegistrations.remove(name);
+        if (sr != null) {
+            sr.unregister();
+        }
+    }
+
+    @Override
+    public void jobAdded(TalendJob job, String name) {
+        LOG.info("Adding job " + name + ".");
+
+        startJob(job, name);
+    }
+
+    @Override
+    public void jobRemoved(TalendJob job, String name) {
+        LOG.info("Removing job " + name + ".");
+
+        stopJob(job, name);
+    }
+
+    public void unbind() {
+        esbJobs.clear();
+        executorService.shutdownNow();
+    }
+
+    private void startJob(TalendJob job, String name) {
+        SimpleJobTask jobTask = new SimpleJobTask(job, name);
+
+        jobTasks.put(name, jobTask);
+
+        ServiceRegistration sr = bundleContext.registerService(
+                ManagedService.class.getName(), jobTask,
+                getManagedServiceProperties(name));
+        serviceRegistrations.put(name, sr);
+        executorService.execute(jobTask);
+    }
+
+    private void stopJob(TalendJob job, String name) {
+        JobTask jobTask = jobTasks.remove(name);
+        if (jobTask != null) {
+            jobTask.stop();
+        }
+
+        ServiceRegistration sr = serviceRegistrations.remove(name);
+        if (sr != null) {
+            sr.unregister();
+        }
+    }
+
+    @Override
+    public GenericOperation retrieveOperation(String jobName, String[] args) {
+        OperationTask task = operationTasks.get(jobName);
+        if (task == null) {
+            TalendESBJob job = getJob(jobName);
+            if (job == null) {
+                throw new IllegalArgumentException("Talend job '" + jobName
+                        + "' not found");
             }
+            task = new OperationTask(job, args);
+            operationTasks.put(jobName, task);
+            executorService.execute(task);
         }
+        return task;
+    }
 
-        public boolean isRequired() {
-            return false;
+    private TalendESBJob getJob(String name) {
+        TalendESBJob job = esbJobs.get(name);
+        if (job == null) {
+            throw new IllegalArgumentException("Talend ESB job with name "
+                    + name + "' not found");
         }
+        return (TalendESBJob) job;
+    }
 
-        public synchronized Object getRequest() throws ESBJobInterruptedException {
-            if (delegate == null) {
-                // This will be run after #getRequest will be called from the job
-                delegate = createESBProvider(endpointInfo.getEndpointProperties());
-            }
-            return delegate.getRequest();
-        }
+    private Dictionary<String, Object> getManagedServiceProperties(
+            String routeName) {
+        Dictionary<String, Object> result = new Hashtable<String, Object>();
+        result.put(Constants.SERVICE_PID, routeName);
+        return result;
+    }
 
-        public void sendResponse(Object response) {
-            if (delegate != null) {
-                delegate.sendResponse(response);
-            }
-        }
-
+    private boolean isConsumerOnly(TalendESBJob esbJob) {
+        return esbJob.getEndpoint() == null;
     }
 
 }

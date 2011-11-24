@@ -19,35 +19,19 @@
  */
 package org.talend.esb.job.controller;
 
-import routines.system.api.TalendJob;
-
 /**
  * Interface describing Talend job launcher behaviors.
  */
 public interface JobLauncher {
 
     /**
-     * Start a given Talend job with the given arguments.
+     * Retrieve the operation that is backed by the job with the given name. The operation object
+     * must not be cached but retrieved every time the operation is invoked. Otherwise a clean
+     * shutdown of the bundle where the job isincluded is not possible.
      *
-     * @param talendJob the Talend job.
-     * @param args the Talend job run arguments.
+     * @param jobName the Talend job name.
+     * @param args additional parameters to be passed to the job
      */
-    public void startJob(final TalendJob talendJob, final String[] args);
-
-    /**
-     * Start a Talend job with the given name and the given callback.
-     *
-     * @param name the Talend job name.
-     * @param controller the RuntimeESBProviderCallbackController.
-     */
-    public void startJob(String name,
-        final ESBProviderCallbackController controller);
-
-    /**
-     * Stop a given Talend job.
-     *
-     * @param talendJob the Talend job.
-     */
-    public void stopJob(final TalendJob talendJob);
+    GenericOperation retrieveOperation(String jobName, String[] args);
 
 }

@@ -19,18 +19,18 @@
  */
 package org.talend.esb.servicelocator;
 
-import static org.talend.esb.servicelocator.TestValues.ENDPOINT_1;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Collection;
 
+import org.w3c.dom.Element;
 
 import org.talend.esb.DomMother;
 import org.talend.esb.servicelocator.client.SLProperties;
 import org.talend.esb.servicelocator.client.internal.endpoint.BindingType;
 import org.talend.esb.servicelocator.client.internal.endpoint.TransportType;
-import org.w3c.dom.Element;
 
+import static org.talend.esb.servicelocator.TestValues.ENDPOINT_1;
 import static org.talend.esb.servicelocator.TestValues.LAST_TIME_STARTED;
 import static org.talend.esb.servicelocator.TestValues.LAST_TIME_STOPPED;
 
@@ -38,28 +38,37 @@ public class TestContent {
 
     public static final String WSA = "http://www.w3.org/2005/08/addressing";
     
-    public static final String SL = "http://talend.org/esb/serviceLocator/4.2";
+    public static final String SL = "http://talend.org/schemas/esb/locator/content/20011/11";
 
-//    public static final long LAST_TIME_STARTED = 129874534433L;
+    public static final byte[] CONTENT_ANY_1 = new byte[] {51, 6, 23, 45, 127, 34};
 
-//    public static final long LAST_TIME_STOPPED = 129885675343L;
+    public static final byte[] CONTENT_ANY_2 = new byte[] {15, 26, 32, 76, 111};
 
-    public static final byte[] CONTENT_ENDPOINT_1 = createContent(ENDPOINT_1, LAST_TIME_STARTED, -1, BindingType.SOAP_11, TransportType.HTTP, null);
+    public static final byte[] CONTENT_ENDPOINT_1 =
+        createContent(ENDPOINT_1, LAST_TIME_STARTED, -1, BindingType.SOAP_11, TransportType.HTTP, null);
 
     public static byte[] createContent(String addressVal) {
-        return createContent(addressVal, -1, -1, BindingType.SOAP_11, TransportType.HTTP, null);
+        return createContent(
+                addressVal, -1, -1, BindingType.SOAP_11, TransportType.HTTP, null);
     }
 
     public static byte[] createContent(String addressVal, Long lastStartTime, Long lastStopTime) {
-        return createContent(addressVal, lastStartTime, lastStopTime, BindingType.SOAP_11, TransportType.HTTP, null);
+        return createContent(
+                addressVal, lastStartTime, lastStopTime, BindingType.SOAP_11, TransportType.HTTP, null);
     }
     
     public static byte[] createContent(SLProperties props) {
-        return createContent("", LAST_TIME_STARTED, LAST_TIME_STOPPED, BindingType.SOAP_11, TransportType.HTTP, props);
+        return createContent(
+                "", LAST_TIME_STARTED, LAST_TIME_STOPPED, BindingType.SOAP_11, TransportType.HTTP, props);
     }
 
-    public static byte[] createContent(String addressVal, long lastStartTime, long lastStopTime, SLProperties props) {
-        return createContent(addressVal, lastStartTime, lastStopTime, BindingType.SOAP_11, TransportType.HTTP, props);
+    public static byte[] createContent(
+            String addressVal,
+            long lastStartTime,
+            long lastStopTime,
+            SLProperties props) {
+        return createContent(
+                addressVal, lastStartTime, lastStopTime, BindingType.SOAP_11, TransportType.HTTP, props);
     }
 
     public static byte[] createContent(String addressVal, long lastStartTime, long lastStopTime, 
@@ -85,12 +94,12 @@ public class TestContent {
 
     public static void addProperties(Element parent, SLProperties properties) {
         Element slProps  = DomMother.addElement(parent, SL, "ServiceLocatorProperties");
-        for(String name : properties.getPropertyNames()) {
+        for (String name : properties.getPropertyNames()) {
             Element entry  = DomMother.addElement(slProps, SL, "Entry");
             DomMother.addAttribute(entry, "key",  name);
 
             Collection<String> values = properties.getValues(name);
-            for(String  value : values) {
+            for (String  value : values) {
                 DomMother.addLeafElement(entry, SL, "Value", value);                
             }
         }

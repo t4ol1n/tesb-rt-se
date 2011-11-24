@@ -9,18 +9,19 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 #
 ###############################################################################
+
 Example for Service Activity Monitoring(SAM)
 ============================================
-This example illustrates how to deploy and configure Service Activity Monitoring on CXF based project. 
+This example illustrates how to deploy and configure Service Activity Monitoring on CXF based projects. 
 
 
 Prerequisite
 ------------
 
 To build and run this example, you must install:
-    J2SE Development Kit (JDK) 5.0 or above
+    J2SE Development Kit (JDK) 1.6 or above
     Apache Maven 3.x or above
-    Servlet container (Tomcat 5.5 or above)
+    Servlet container (Tomcat 6.0 or above)
     OSGI Container (TESB Container or Karaf 2.2.x or above)
 
 	
@@ -42,14 +43,14 @@ Start Derby database and sam-server in OSGI Container
 	* starting the TESB OSGi container:
 
 	cd talend-esb-<version>/container/bin
-	Linux: ./tesb
-	Windows: tesb.bat
+	Linux: ./trun
+	Windows: trun.bat
 
 	* starting Derby database and sam-server in TESB OSGi container:
 
 	Enter the following command on the OSGI console:
-	karaf@tesb> features:install tesb-derby-starter
-	karaf@tesb> features:install tesb-sam-server
+	karaf@trun> features:install tesb-derby-starter
+	karaf@trun> features:install tesb-sam-server
 
 	By default the TESB OSGI Container runs on 8040 port and the sam-server can be accessible under this url: 
 	http://localhost:8040/services/MonitoringServiceSOAP?wsdl

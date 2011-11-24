@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+ Copyright (c) 2011 Talend Inc. - www.talend.com
+ All rights reserved.
+
+ This program and the accompanying materials are made available
+ under the terms of the Apache License v2.0
+ which accompanies this distribution, and is available at
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.talend.esb.sts</groupId>
+    <artifactId>org.talend.esb.sts.config</artifactId>
+    <packaging>bundle</packaging>
+    <name>Talend :: ESB :: STS :: CONFIG</name>
+
+    <parent>
+        <groupId>org.talend.esb</groupId>
+        <artifactId>sts</artifactId>
+        <version>5.0.1-SNAPSHOT</version>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-ws-security</artifactId>
+            <version>${cxf.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Fragment-Host>org.apache.cxf.services.sts.core</Fragment-Host>
+                        <Require-Bundle>
+                            org.apache.cxf.bundle,
+                            org.springframework.beans,
+                            org.springframework.context,
+                            org.springframework.osgi.core
+                        </Require-Bundle>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-artifacts</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>etc/org.talend.esb.sts.server.cfg</file>
+                                    <type>cfg</type>
+                                    <classifier>org.talend.esb.sts.server</classifier>
+                                </artifact>
+                                <artifact>
+                                    <file>etc/keystores/stsKeystore.properties</file>
+                                    <type>properties</type>
+                                    <classifier>stsKeystore</classifier>
+                                </artifact>
+                                <artifact>
+                                    <file>etc/keystores/stsstore.jks</file>
+                                    <type>jks</type>
+                                    <classifier>stsstore</classifier>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

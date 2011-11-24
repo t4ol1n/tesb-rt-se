@@ -9,7 +9,7 @@
 	<groupId>org.talend.esb</groupId>
 	<artifactId>esb-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>5.0-SNAPSHOT</version>
+	<version>5.0.1-SNAPSHOT</version>
 	<name>Parent pom for the Talend ESB runtime project</name>
 	<description>
         Talend ESB SE bundles Service Factory and Integration Factory, 
@@ -86,21 +86,22 @@
     </developers>
 
     <properties>
-        <cxf.version>2.5.0-SNAPSHOT</cxf.version>
-        <spring.version>3.0.5.RELEASE</spring.version>
-        <karaf.version>2.2.3-SNAPSHOT</karaf.version>
+        <packages.version>${project.version}</packages.version>
+        <cxf.version>2.5.0</cxf.version>
+        <camel.version>2.8.2</camel.version>
+        <activemq.version>5.5.0</activemq.version>
+        <spring.version>3.0.6.RELEASE</spring.version>
+        <karaf.version>2.2.4</karaf.version>
         <zookeeper.version>3.3.3</zookeeper.version>
         <derby.version>10.8.1.2</derby.version>
-        <bnd.version>1.43.0</bnd.version>
-        <slf4j.version>1.6.1</slf4j.version>
+        <slf4j.version>1.6.3</slf4j.version>
         <commons-lang.version>2.6</commons-lang.version>
         <commons-jxpath.version>1.3</commons-jxpath.version>
         <dom4j.bundle.version>1.6.1_4</dom4j.bundle.version>
         <jaxen.bundle.version>1.1.1_2</jaxen.bundle.version>
         <servicemix.specs.version>1.8.0</servicemix.specs.version>
-        <saaj-impl.bundle.version>1.3.2_3</saaj-impl.bundle.version>
+        <saaj-impl.bundle.version>1.3.9_1</saaj-impl.bundle.version>
         <javax.servlet.version>2.5</javax.servlet.version>
-        <felix.fileinstall.version>3.1.10</felix.fileinstall.version>
         <commons-dbcp.version>1.4</commons-dbcp.version>
         <gson.version>1.7.1</gson.version>
         <geronimo-servlet.version>1.1.2</geronimo-servlet.version>
@@ -113,8 +114,10 @@
         <org.apache.cxf.dosgi.version>1.2</org.apache.cxf.dosgi.version>
         <osgi.core.version>4.2.0</osgi.core.version>
         <osgi.compendium.version>4.2.0</osgi.compendium.version>
+        <geronimo-ws-metadata.version>1.1.3</geronimo-ws-metadata.version>
+        <jetty.version>7.4.5.v20110725</jetty.version>
 
-        <cxf.build-utils.version>2.3.2</cxf.build-utils.version>
+        <cxf.build-utils.version>2.4.0</cxf.build-utils.version>
         <cxf.resources.base.path />
         <cxf.checkstyle.extension />
 
@@ -124,10 +127,12 @@
     <modules>
         <module>branding</module>
         <module>locator</module>
-        <module>locator-proxy</module>
+        <module>locator-service</module>
         <module>sam</module>
         <module>job</module>
         <module>features</module>
+        <module>sts</module>
+        <module>zookeeper-server</module>
     </modules>
 
 	<dependencyManagement>
@@ -136,7 +141,7 @@
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
-				<version>4.8.2</version>
+				<version>4.10</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
@@ -215,7 +220,7 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>exec-maven-plugin</artifactId>
-					<version>1.2</version>
+					<version>1.2.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.rat</groupId>
@@ -242,7 +247,7 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>license-maven-plugin</artifactId>
-					<version>1.0-beta-2</version>
+					<version>1.0</version>
 					<configuration>
 						<licenseName>apache_v2</licenseName>
 						<licenseFile>${project.build.directory}/LICENSE.txt</licenseFile>
@@ -279,7 +284,7 @@
 				<plugin>
 					<groupId>org.mortbay.jetty</groupId>
 					<artifactId>jetty-maven-plugin</artifactId>
-					<version>8.0.0.M3</version>
+					<version>${jetty.version}</version>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
@@ -311,7 +316,7 @@
 							<plugin>
 								<groupId>org.apache.maven.plugins</groupId>
 								<artifactId>maven-surefire-report-plugin</artifactId>
-								<version>2.9</version>
+								<version>2.10</version>
 							</plugin>
                             <plugin>
                                 <groupId>org.codehaus.mojo</groupId>
@@ -329,7 +334,7 @@
                             <plugin>
                                 <groupId>org.apache.maven.plugins</groupId>
                                 <artifactId>maven-jxr-plugin</artifactId>
-                                <version>2.2</version>
+                                <version>2.3</version>
                                 <configuration>
                                     <aggregate>true</aggregate>
                                 </configuration>
@@ -365,12 +370,12 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.9</version>
+					<version>2.10</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-deploy-plugin</artifactId>
-					<version>2.6</version>
+					<version>2.7</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -386,38 +391,11 @@
 		</plugins>
 	</build>
 
-	<repositories>
-		<repository>
-			<id>apache-snapshots</id>
-			<url>http://repository.apache.org/snapshots</url>
-			<name>Apache Snapshots Repo</name>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>apache-snapshots</id>
-			<url>http://repository.apache.org/snapshots</url>
-			<name>Apache Snapshots Repo</name>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-		</pluginRepository>
-	</pluginRepositories>
-
 	<distributionManagement>
 		<repository>
 			<id>esb-releases</id>
 			<name>ESB releases Repository</name>
-			<url>${esb.snapshots.repo.url}</url>
+			<url>${esb.releases.repo.url}</url>
 		</repository>
 		<snapshotRepository>
 			<id>esb-snapshots</id>

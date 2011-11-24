@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.talend.esb</groupId>
         <artifactId>sam-parent</artifactId>
-        <version>5.0-SNAPSHOT</version>
+        <version>5.0.1-SNAPSHOT</version>
     </parent>
 
     <name>Service Activity Monitoring :: Agent</name>
@@ -82,6 +82,11 @@
                             {local-packages},
                             META-INF.tesb
                         </Export-Package>
+                        <Require-Bundle>
+                            org.apache.cxf.bundle,
+                            org.springframework.beans,
+                            org.springframework.context
+                        </Require-Bundle>
 						<Bundle-Activator>org.talend.esb.sam.agent.activator.AgentActivator</Bundle-Activator>
                         <_failok>true</_failok>
                         <_nouses>true</_nouses>

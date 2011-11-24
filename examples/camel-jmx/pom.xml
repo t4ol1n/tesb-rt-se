@@ -16,13 +16,13 @@
 
     <groupId>org.talend.esb.examples</groupId>
     <artifactId>camel-jmx</artifactId>
-    <name>Talend ESB Runtime::Camel JMX Example</name>
+    <name>Talend ESB Runtime Examples :: Camel JMX Example</name>
     <packaging>pom</packaging>
 
     <parent>
         <groupId>org.talend.esb.examples</groupId>
         <artifactId>talend-esb-examples</artifactId>
-        <version>5.0-SNAPSHOT</version>
+        <version>5.0.1-SNAPSHOT</version>
     </parent>
 	
 	<modules>

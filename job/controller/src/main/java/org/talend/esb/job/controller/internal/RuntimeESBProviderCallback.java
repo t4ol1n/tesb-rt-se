@@ -21,48 +21,89 @@ package org.talend.esb.job.controller.internal;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Logger;
 
-import routines.system.api.ESBConsumer;
 import routines.system.api.ESBJobInterruptedException;
 import routines.system.api.ESBProviderCallback;
 
-public class RuntimeESBProviderCallback implements ESBProviderCallback, ESBConsumer {
+public class RuntimeESBProviderCallback implements ESBProviderCallback {
 
-    private final boolean isRequestResponse;
-    private final BlockingQueue<Object> requests = new LinkedBlockingQueue<Object>();
+    public static final Logger LOG =
+        Logger.getLogger(RuntimeESBProviderCallback.class.getName());
 
-    private Object request = null;
-    private Object response = null;
+    private static final MessageExchange POISON = new MessageExchange(null);
 
-    public RuntimeESBProviderCallback(boolean isRequestResponse) {
-        this.isRequestResponse = isRequestResponse;
+    private final BlockingQueue<MessageExchange> requests = new LinkedBlockingQueue<MessageExchange>();
+
+    private volatile MessageExchange currentExchange;
+
+    private volatile boolean stopped;
+
+    public RuntimeESBProviderCallback() {
     }
 
     public Object getRequest() throws ESBJobInterruptedException {
-        try {
-            request = requests.take();
-            return request;
-        } catch (InterruptedException e) {
-            throw new ESBJobInterruptedException(e.getMessage(), e);
+        currentExchange = null;
+        while (currentExchange == null) {
+            try {
+                currentExchange = requests.take();
+                if (currentExchange == POISON) {
+                    stopped = true;
+                    throw new ESBJobInterruptedException("Job was cancelled.");
+                }
+            } catch (InterruptedException e) {
+                prepareStop();
+            }
         }
+        return currentExchange.request;
     }
 
     public void sendResponse(Object response) {
-        this.response = response;
-        synchronized (request) {
-            request.notify();
+        currentExchange.response = response;
+        synchronized (currentExchange) {
+            currentExchange.notify();
         }
     }
 
-    public Object invoke(Object payload) throws Exception {
-        requests.put(payload);
-        if(!isRequestResponse) {
+    public Object invoke(Object payload, boolean isRequestResponse) throws Exception {
+        MessageExchange myExchange = new MessageExchange(payload);
+        requests.put(myExchange);
+        if (!isRequestResponse) {
             return null;
         }
-        synchronized (payload) {
-            payload.wait();
+        synchronized (myExchange) {
+            myExchange.wait();
         }
-        return response;
+        return myExchange.response;
+    }
+    
+    public void stop() {
+        prepareStop();
     }
 
+    public boolean isStopped() {
+        return stopped;    
+    }
+    
+    protected void prepareStop() {
+        boolean success = false;
+        while (!success) {
+            try {
+                requests.put(POISON);
+                success = true;
+            } catch (InterruptedException e) {
+                LOG.throwing(this.getClass().getName(), "prepareStop", e);
+            }
+        }
+    }
+    
+    private static class MessageExchange {
+        public Object request;
+        
+        public Object response;
+        
+        public MessageExchange(Object request) {
+            this.request = request;
+        }
+    }
 }

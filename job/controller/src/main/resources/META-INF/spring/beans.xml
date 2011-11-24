@@ -21,31 +21,67 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:osgi="http://www.springframework.org/schema/osgi"
+    xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
     xsi:schemaLocation="
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
+        http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd 
     "
 >
     <import resource="classpath:META-INF/cxf/cxf.xml" />
-    <!-- SL -->
-    <import resource="classpath:META-INF/tesb/locator/beans-osgi.xml" />
     <!-- SAM -->
     <import resource="classpath:META-INF/tesb/agent-osgi.xml" />
 
-    <!-- CustomInfoHandler must as a bean because setHandlers() in EventCollectorImpl
-         marked as Autowired. Otherwise, it will not work after testing. (c) Xilai Dai -->
-    <bean id="customInfoHandler" class="org.talend.esb.sam.common.handler.impl.CustomInfoHandler"/>
-
-    <bean id="jobLauncher" class="org.talend.esb.job.controller.internal.JobLauncherImpl">
-        <property name="bus" ref="cxf" />
-        <property name="serviceLocator">
-            <bean class="org.talend.esb.servicelocator.cxf.LocatorFeature"/>
+    <!-- placeholder configurer -->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="properties">
+            <!-- Configuration Admin entry -->
+            <osgix:cm-properties persistent-id="org.talend.esb.job"/>
         </property>
-        <property name="serviceActivityMonitoring" ref="eventFeature"/>
-        <property name="customInfoHandler" ref="customInfoHandler"/>
+        <property name="placeholderPrefix" value="$job{" />
+    </bean>
+
+<!--
+    <osgi:list id="jobs" interface="routines.system.api.TalendJob" greedy-proxying="true" cardinality="0..N">
+        <osgi:listener bind-method="jobAdded" unbind-method="jobRemoved" ref="jobLauncher"/>
+    </osgi:list>
+-->
+
+    <bean id="executorService" class="org.talend.esb.job.controller.internal.JobExecutorFactory"
+      factory-method="newExecutor"/>
+
+    <bean id="jobLauncher" class="org.talend.esb.job.controller.internal.JobLauncherImpl" destroy-method="unbind">
+        <property name="bundleContext" ref="bundleContext"/>
+        <property name="executorService" ref="executorService" />
+        <property name="endpointRegistry" ref="endpointRegistry"/>
+    </bean>
+
+    <bean id="jobTracker" class="org.talend.esb.job.controller.internal.JobTracker" init-method="bind" destroy-method="unbind">
+        <property name="jobListener" ref="jobLauncher" />
         <property name="bundleContext" ref="bundleContext"/>
     </bean>
 
-    <osgi:service interface="org.talend.esb.job.controller.JobLauncher" ref="jobLauncher"/>
+    <bean id="endpointRegistry" class="org.talend.esb.job.controller.internal.RuntimeESBEndpointRegistry">
+        <property name="samQueue" ref="samQueue"/>
+        <property name="policyProvider" ref="policyProvider"/>
+        <property name="clientProperties">
+            <osgix:cm-properties persistent-id="org.talend.esb.job.client"/>
+        </property>
+        <property name="stsProperties">
+            <osgix:cm-properties persistent-id="org.talend.esb.job.client.sts"/>
+        </property>
+    </bean>
+
+    <bean id="policyProvider" class="org.talend.esb.job.controller.internal.PolicyProviderImpl">
+        <property name="policyToken" value="$job{policy.token}"/>
+        <property name="policySaml" value="$job{policy.saml}"/>
+    </bean>
+    <!--osgi:service interface="org.talend.esb.job.controller.PolicyProvider" ref="policyProvider"/-->
+
+    <bean id="providerFactory" class="org.talend.esb.job.controller.internal.ProviderFactoryImpl">
+        <property name="jobLauncher" ref="jobLauncher"/>
+        <property name="policyProvider" ref="policyProvider"/>
+    </bean>
+    <osgi:service interface="org.talend.esb.job.controller.ProviderFactory" ref="providerFactory"/>
 
 </beans>

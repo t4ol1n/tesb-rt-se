@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.talend.esb</groupId>
         <artifactId>esb-parent</artifactId>
-        <version>5.0-SNAPSHOT</version>
+        <version>5.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -16,12 +16,8 @@
 
     <modules>
         <module>job-api</module>
-        <module>converter</module>
-        <module>deployer</module>
         <module>controller</module>
-        <module>command</module>
         <module>console</module>
-        <module>features</module>
     </modules>
 
 	<build>

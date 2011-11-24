@@ -19,9 +19,9 @@
  */
 package org.talend.esb.job.console;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
-import org.talend.esb.job.controller.Controller;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Collection;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -29,21 +29,21 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.List;
+
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 
 /**
  * Main home servlet
  */
 public class HomeServlet extends HttpServlet {
 
-    private BundleContext bundleContext;
+//    private BundleContext bundleContext;
 
-    public void init(ServletConfig servletConfig) throws ServletException {
-        ServletContext context = servletConfig.getServletContext();
-        bundleContext = (BundleContext) context.getAttribute("osgi-bundlecontext");
-    }
+//    public void init(ServletConfig servletConfig) throws ServletException {
+//        ServletContext context = servletConfig.getServletContext();
+//        bundleContext = (BundleContext) context.getAttribute("osgi-bundlecontext");
+//    }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doIt(request, response);
@@ -54,6 +54,8 @@ public class HomeServlet extends HttpServlet {
     }
 
     public void doIt(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String embedded = request.getParameter("embedded");
+        /*
         String job = request.getParameter("job");
         String action = request.getParameter("action");
         String args = request.getParameter("args");
@@ -81,10 +83,12 @@ public class HomeServlet extends HttpServlet {
             response.sendRedirect("home.do?job=" + job + "&result=" + result + "&message=" + message);
             return;
         }
-
+*/
         try {
             PrintWriter writer = response.getWriter();
-            writer.println(Template.header());
+
+            if (embedded == null)
+                writer.println(Template.header());
 
             writer.println("<div id=\"toolsbar_bc\">");
             writer.println("<div id=\"dc_refresh\" class=\"bc_btn\"><div class=\"bb\"><div><a href=\"home.do\"><img src=\"img/icons/database_refresh.gif\" alt=\"Refresh\" /><span>Refresh</span></a></div></div></div>");
@@ -107,6 +111,7 @@ public class HomeServlet extends HttpServlet {
             writer.println("<tbody>");
 
             // list job
+/*
             Controller controller = null;
             ServiceReference ref = bundleContext.getServiceReference(Controller.class.getName());
             if (ref != null) {
@@ -114,17 +119,7 @@ public class HomeServlet extends HttpServlet {
             }
 
             if (controller != null) {
-                List<String> jobs = controller.listJobs();
-                for (String jobName : jobs) {
-                    writer.println("<tr>");
-                    writer.println("<td class=\"td0\"><span>" + jobName + "</span></td>");
-                    writer.println("<td><img src=\"img/icons/job.gif\" alt=\"Job\" /><span>Job</span></td>");
-                    writer.println("<td><span>" + jobName + "</span></td>");
-                    writer.println("<td><span></span></td>");
-                    writer.println("<td><div><img src=\"img/icons/package_go.gif\" altr=\"Deployed\" /><span>Deployed</span></div></td>");
-                    writer.println("</tr>");
-                }
-                List<String> routes = controller.listRoutes();
+                Collection<String> routes = controller.listRoutes();
                 for (String routeName : routes) {
                     writer.println("<tr>");
                     writer.println("<td class=\"td0\"><span>" + routeName + "</span></td>");
@@ -139,7 +134,7 @@ public class HomeServlet extends HttpServlet {
             if (ref != null) {
                 bundleContext.ungetService(ref);
             }
-
+*/
             writer.println("</tbody>");
             writer.println("</table>");
             writer.println("</div>");
@@ -171,7 +166,9 @@ public class HomeServlet extends HttpServlet {
                 writer.println("</script>");
             }
 
-            writer.println(Template.footer());
+            if (embedded == null)
+                writer.println(Template.footer());
+
             writer.flush();
             writer.close();
         } catch (Exception e) {

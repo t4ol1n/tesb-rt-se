@@ -23,9 +23,11 @@
 
     <id>win-bin</id>
 
+	<baseDirectory>TESB_SE-V${packages.version}</baseDirectory>
+
+
     <formats>
         <format>zip</format>
-<!--         <format>dir</format> -->
     </formats>
 
     <fileSets>
@@ -46,11 +48,6 @@
             <directory>target/dependencies/camel/apache-camel-${camel.version}/examples</directory>
             <outputDirectory>/examples/apache/camel</outputDirectory>
         </fileSet>
-        <!-- 
-        <fileSet>
-            <directory>target/dependencies/camel/apache-camel-${camel.version}/doc/manual</directory>
-            <outputDirectory>/docs/camel-manual</outputDirectory>
-        </fileSet>  -->
 
         <!-- Expanded CXF Runtime -->
         <fileSet>
@@ -230,6 +227,34 @@
             <fileMode>0755</fileMode>
         </fileSet>
 
+        <!-- Expanded ActiveMQ Runtime -->
+        <fileSet>
+            <directory>target/dependencies/activemq-win/apache-activemq-${activemq.version}</directory>
+            <outputDirectory>/activemq</outputDirectory>
+            <excludes>
+                <exclude>bin/**</exclude>
+                <exclude>LICENSE</exclude>
+                <exclude>NOTICE</exclude>
+            </excludes>
+        </fileSet>
+
+        <!-- Copy over unix activemq bin/ subdirectories -->
+        <fileSet>
+            <directory>target/dependencies/activemq-unix/apache-activemq-${activemq.version}/bin</directory>
+            <outputDirectory>/activemq/bin</outputDirectory>
+        </fileSet>
+
+        <!-- Copy over win activemq bin/ subdirectories -->
+        <fileSet>
+            <directory>target/dependencies/activemq-win/apache-activemq-${activemq.version}/bin</directory>
+            <outputDirectory>/activemq/bin</outputDirectory>
+            <includes>
+                <include>win*/**</include>
+                <include>*.bat</include>
+                <include>*.cmd</include>
+            </includes>
+        </fileSet>
+
         <!-- Copy over jar files -->
         <fileSet>
             <directory>target/dependencies</directory>
@@ -298,6 +323,14 @@
             <outputDirectory>/add-ons</outputDirectory>
         </fileSet>
 
+        <!-- Copy Locator proxy resources -->
+        <fileSet>
+            <directory>${basedir}/../locator-service/locator-service-common/src/main/resources/model</directory>
+            <outputDirectory>/add-ons/locator</outputDirectory>
+            <fileMode>0644</fileMode>
+            <directoryMode>755</directoryMode>
+        </fileSet>
+
         <!-- Copy Docs -->
         <fileSet>
             <directory>target/docs/esb-docs-${project.version}</directory>
@@ -305,33 +338,59 @@
             <fileMode>0644</fileMode>
             <directoryMode>755</directoryMode>
             <includes>
-            	<include>ReleaseNotes.*</include>
+                <include>ReleaseNotes.*</include>
             </includes>
+        </fileSet>
+
+        <!-- Copy Examples -->
+        <fileSet>
+            <directory>${basedir}/../examples</directory>
+            <outputDirectory>/examples/talend/tesb</outputDirectory>
+            <excludes>
+                <!-- Exclude maven build target directory -->
+                <exclude>**/target/**</exclude>
+                <!-- Exclude Eclipse files and directories -->
+                <exclude>**/.settings/**</exclude>
+                <exclude>**/.project</exclude>
+                <exclude>**/.classpath</exclude>
+                <!-- Exclude Intellij IDEA files and directories -->
+                <exclude>**/*.i??</exclude>
+                <!-- Exclude parent pom -->
+                <exclude>parent/**</exclude>
+            </excludes>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/../examples/parent</directory>
+            <outputDirectory>/examples/talend</outputDirectory>
+        </fileSet>
+
+        <fileSet>
+            <directory>target/dependencies/talend-if-${tif.version}/examples</directory>
+            <outputDirectory>/examples/talend/tif</outputDirectory>
+            <fileMode>0644</fileMode>
+            <directoryMode>755</directoryMode>
+        </fileSet>
+        <fileSet>
+            <directory>target/dependencies/talend-sf-${tsf.version}/examples</directory>
+            <outputDirectory>/examples/talend/tsf</outputDirectory>
+            <fileMode>0644</fileMode>
+            <directoryMode>755</directoryMode>
         </fileSet>
 
     </fileSets>
 
     <files>
         <file>
-            <source>${basedir}/target/dependencies/win/apache-karaf-${karaf.version}/bin/karaf.bat</source>
+            <source>${basedir}/src/main/bin/trun.bat</source>
             <outputDirectory>/container/bin/</outputDirectory>
-            <destName>tesb.bat</destName>
             <fileMode>0755</fileMode>
             <lineEnding>dos</lineEnding>
         </file>
         <file>
-            <source>${basedir}/target/dependencies/unix/apache-karaf-${karaf.version}/bin/karaf</source>
+            <source>${basedir}/src/main/bin/trun</source>
             <outputDirectory>/container/bin/</outputDirectory>
-            <destName>tesb</destName>
             <fileMode>0755</fileMode>
             <lineEnding>unix</lineEnding>
-        </file>
-        <file>
-            <source>${basedir}/target/classes/camel-features.xml</source>
-            <outputDirectory>/container/system/org/apache/camel/karaf/apache-camel/${camel.version}</outputDirectory>
-            <destName>apache-camel-${camel.version}-features.xml</destName>
-            <fileMode>0644</fileMode>
-            <lineEnding>dos</lineEnding>
         </file>
         <file>
             <source>${basedir}/target/classes/tif-features.xml</source>
@@ -344,13 +403,6 @@
             <source>${basedir}/../features/target/classes/features.xml</source>
             <outputDirectory>/container/system/org/talend/esb/features/${project.version}</outputDirectory>
             <destName>features-${project.version}.xml</destName>
-            <fileMode>0644</fileMode>
-            <lineEnding>dos</lineEnding>
-        </file>
-        <file>
-            <source>${basedir}/../job/features/target/classes/features.xml</source>
-            <outputDirectory>/container/system/org/talend/esb/talend-job/${project.version}</outputDirectory>
-            <destName>talend-job-${project.version}-features.xml</destName>
             <fileMode>0644</fileMode>
             <lineEnding>dos</lineEnding>
         </file>
@@ -391,7 +443,7 @@
             <directoryMode>755</directoryMode>
             <fileMode>0644</fileMode>
         </dependencySet>
-        <!--dependencySet>
+        <dependencySet>
             <outputDirectory>/container/system</outputDirectory>
             <outputFileNameMapping>org/apache/camel/karaf/${artifact.artifactId}/${artifact.baseVersion}/${artifact.artifactId}-${artifact.baseVersion}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
             <unpack>false</unpack>
@@ -401,7 +453,7 @@
             </includes>
             <directoryMode>755</directoryMode>
             <fileMode>0644</fileMode>
-        </dependencySet-->
+        </dependencySet>
         <dependencySet>
             <outputDirectory>/lib</outputDirectory>
             <unpack>false</unpack>
@@ -422,83 +474,12 @@
             <fileMode>0644</fileMode>
         </dependencySet>
         <dependencySet>
-            <outputDirectory>/container/system</outputDirectory>
+            <outputDirectory>/add-ons/sts</outputDirectory>
+            <outputFileNameMapping>SecurityTokenService.war</outputFileNameMapping>
             <unpack>false</unpack>
-            <useProjectArtifact>false</useProjectArtifact>
-            <outputFileNameMapping>org/apache/felix/${artifact.artifactId}/${artifact.baseVersion}/${artifact.artifactId}-${artifact.baseVersion}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
+            <scope>runtime</scope>
             <includes>
-                <include>org.apache.felix:org.osgi.compendium</include>
-            </includes>
-            <directoryMode>755</directoryMode>
-            <fileMode>0644</fileMode>
-        </dependencySet>
-        <dependencySet>
-            <outputDirectory>/container/system</outputDirectory>
-            <unpack>false</unpack>
-            <useProjectArtifact>false</useProjectArtifact>
-            <outputFileNameMapping>org/springframework/${artifact.artifactId}/${artifact.baseVersion}/${artifact.artifactId}-${artifact.baseVersion}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
-            <includes>
-                <include>org.springframework:spring-aop</include>
-                <include>org.springframework:spring-beans</include>
-                <include>org.springframework:spring-context</include>
-                <include>org.springframework:spring-core</include>
-                <include>org.springframework:spring-tx</include>
-            </includes>
-            <directoryMode>755</directoryMode>
-            <fileMode>0644</fileMode>
-        </dependencySet>
-        <dependencySet>
-            <outputDirectory>/container/system</outputDirectory>
-            <unpack>false</unpack>
-            <useProjectArtifact>false</useProjectArtifact>
-            <outputFileNameMapping>org/springframework/osgi/${artifact.artifactId}/${artifact.baseVersion}/${artifact.artifactId}-${artifact.baseVersion}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
-            <includes>
-                <include>org.springframework.osgi:spring-osgi-core</include>
-                <include>org.springframework.osgi:spring-osgi-extender</include>
-                <include>org.springframework.osgi:spring-osgi-io</include>
-            </includes>
-            <directoryMode>755</directoryMode>
-            <fileMode>0644</fileMode>
-        </dependencySet>
-        <dependencySet>
-            <outputDirectory>/container/system</outputDirectory>
-            <unpack>false</unpack>
-            <useProjectArtifact>false</useProjectArtifact>
-            <outputFileNameMapping>org/apache/geronimo/specs/${artifact.artifactId}/${artifact.baseVersion}/${artifact.artifactId}-${artifact.baseVersion}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
-            <includes>
-                <include>org.apache.geronimo.specs:geronimo-servlet_2.5_spec</include>
-                <include>org.apache.geronimo.specs:geronimo-annotation_1.0_spec</include>
-            </includes>
-            <directoryMode>755</directoryMode>
-            <fileMode>0644</fileMode>
-        </dependencySet>
-        <dependencySet>
-            <outputDirectory>/container/system</outputDirectory>
-            <unpack>false</unpack>
-            <useProjectArtifact>false</useProjectArtifact>
-            <outputFileNameMapping>org/apache/servicemix/bundles/${artifact.artifactId}/${artifact.baseVersion}/${artifact.artifactId}-${artifact.baseVersion}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
-            <includes>
-                <include>org.apache.servicemix.bundles:org.apache.servicemix.bundles.aopalliance</include>
-                <include>org.apache.servicemix.bundles:org.apache.servicemix.bundles.cglib</include>
-                <include>org.apache.servicemix.bundles:org.apache.servicemix.bundles.jaxp-ri</include>
-                <include>org.apache.servicemix.bundles:org.apache.servicemix.bundles.oro</include>
-                <include>org.apache.servicemix.bundles:org.apache.servicemix.bundles.opensaml</include>
-                <include>org.apache.servicemix.bundles:org.apache.servicemix.bundles.commons-jexl</include>
-                <include>org.apache.servicemix.bundles:org.apache.servicemix.bundles.commons-vfs</include>
-                <include>org.apache.servicemix.bundles:org.apache.servicemix.bundles.commons-codec</include>
-                <include>org.apache.servicemix.bundles:org.apache.servicemix.bundles.commons-httpclient</include>
-            </includes>
-            <directoryMode>755</directoryMode>
-            <fileMode>0644</fileMode>
-        </dependencySet>
-        <dependencySet>
-            <outputDirectory>/container/system</outputDirectory>
-            <unpack>false</unpack>
-            <useProjectArtifact>false</useProjectArtifact>
-            <outputFileNameMapping>org/apache/servicemix/specs/${artifact.artifactId}/${artifact.baseVersion}/${artifact.artifactId}-${artifact.baseVersion}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
-            <includes>
-                <include>org.apache.servicemix.specs:org.apache.servicemix.specs.jaxp-api-1.4</include>
-                <include>org.apache.servicemix.specs:org.apache.servicemix.specs.stax-api-1.0</include>
+                <include>org.talend.esb.sts:cxf-sts-war:war</include>
             </includes>
             <directoryMode>755</directoryMode>
             <fileMode>0644</fileMode>

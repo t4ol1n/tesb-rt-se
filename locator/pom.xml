@@ -19,7 +19,7 @@
 	<parent>
 		<groupId>org.talend.esb</groupId>
 		<artifactId>esb-parent</artifactId>
-		<version>5.0-SNAPSHOT</version>
+		<version>5.0.1-SNAPSHOT</version>
 	</parent>
 
 	<dependencies>
@@ -89,16 +89,15 @@
                             <goal>xsdtojava</goal>
                         </goals>
                         <configuration>
-<!--
-                            <extensions>
-                                <extension>org.apache.cxf.xjcplugins:cxf-xjc-dv:${cxf.xjc-utils.version}</extension>
-                            </extensions>
--->
-                            <!-- sourceRoot>${basedir}/target/generated/src/main/java</sourceRoot-->
                             <xsdOptions>
                                 <xsdOption>
-                                    <xsd>${basedir}/src/main/resources/schemas/service-locator-properties.xsd</xsd>
-                                    <packagename>org.talend.esb.servicelocator.client.internal.endpoint</packagename>
+                                    <xsd>${basedir}/src/main/resources/schemas/locator-endpoint.xsd</xsd>
+                                    <bindingFile>${basedir}/src/main/resources/schemas/locator-endpoint.xjb</bindingFile>
+									<catalog>${basedir}/src/main/build-resources/catalog.cat</catalog>
+                                </xsdOption>
+                                <xsdOption>
+                                    <xsd>${basedir}/src/main/resources/schemas/ws-addr.xsd</xsd>
+                                    <bindingFile>${basedir}/src/main/resources/schemas/ws-addr.xjb</bindingFile>
                                 </xsdOption>
                             </xsdOptions>
                         </configuration>
@@ -113,9 +112,14 @@
 					<instructions>
 						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 						<Export-Package>
-							org.talend.esb.locator, org.talend.esb.servicelocator.*, 
+							org.talend.esb.servicelocator.*, 
 							'=META-INF.tesb.locator'
                         </Export-Package>
+                        <Require-Bundle>
+                            org.apache.cxf.bundle,
+                            org.springframework.beans,
+                            org.springframework.context
+                        </Require-Bundle>
 						<_failok>true</_failok>
 					</instructions>
 				</configuration>

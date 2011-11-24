@@ -21,6 +21,7 @@ package org.talend.esb.job.controller;
 
 public interface ESBEndpointConstants {
 
+    // keys for ESBEndpointInfo properties
     String PUBLISHED_ENDPOINT_URL = "publishedEndpointUrl";
     String DEFAULT_OPERATION_NAME = "defaultOperationName";
     String SERVICE_NAME = "serviceName";
@@ -28,6 +29,18 @@ public interface ESBEndpointConstants {
     String COMMUNICATION_STYLE = "COMMUNICATION_STYLE";
     String USE_SERVICE_LOCATOR = "useServiceLocator";
     String USE_SERVICE_ACTIVITY_MONITOR = "useServiceActivityMonitor";
+    String ESB_SECURITY = "esbSecurity";
+    String USERNAME = "username";
+    String PASSWORD = "password";
+
+    // request constants
+    String REQUEST_PAYLOAD = "PAYLOAD";
+    String REQUEST_SAM_PROPS = "SAM-PROPS";
+    String REQUEST_SL_PROPS = "SL-PROPS";
+
+    // policy id
+    String ID_POLICY_TOKEN = "org.talend.esb.job.token.policy";
+    String ID_POLICY_SAML = "org.talend.esb.job.saml.policy";
 
     enum OperationStyle {
         REQUEST_RESPONSE("request-response"),
@@ -54,4 +67,28 @@ public interface ESBEndpointConstants {
         }
     }
 
+    enum EsbSecurity {
+        NO("NO"),
+        TOKEN("TOKEN"),
+        SAML("SAML");
+
+        String esbSecurity;
+
+        EsbSecurity(String esbSecurity) {
+            this.esbSecurity = esbSecurity;
+        }
+
+        public static EsbSecurity fromString(String value) {
+            if (null == value) {
+                return NO;
+            }
+            for (EsbSecurity esbSecurity : EsbSecurity.values()) {
+                if (esbSecurity.esbSecurity.equals(value)) {
+                    return esbSecurity;
+                }
+            }
+            throw new IllegalArgumentException(
+                    "Unsupported secutity value: " + value);
+        }
+    }
 }
